@@ -9,6 +9,7 @@ struct TasksView: View {
     @Query private var dayRecords: [DayRecord]
 
     @State private var showingAddTask = false
+    @State private var showCelebration = false
 
     private var todayString: String { Date().dayString }
 
@@ -49,6 +50,14 @@ struct TasksView: View {
                     }
                 }
             }
+            .overlay(alignment: .top) {
+                if showCelebration {
+                    celebrationBanner
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .padding(.top, 8)
+                        .allowsHitTesting(false)
+                }
+            }
             .sheet(isPresented: $showingAddTask) {
                 AddTaskView { title in
                     addTask(title: title)
@@ -65,6 +74,16 @@ struct TasksView: View {
         }
     }
 
+    private var celebrationBanner: some View {
+        Text("All done! 🎉")
+            .font(.subheadline.bold())
+            .foregroundStyle(.white)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(Color.green, in: Capsule())
+            .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
+    }
+
     // MARK: - Day Reset
 
     private func performDayResetIfNeeded() {
@@ -72,7 +91,6 @@ struct TasksView: View {
         let lastReset = UserDefaults.standard.string(forKey: "lastResetDate")
 
         if lastReset == nil {
-            // First launch — initialize and record today
             UserDefaults.standard.set(today, forKey: "lastResetDate")
             saveRecord(from: tasks)
             return
@@ -80,7 +98,6 @@ struct TasksView: View {
 
         guard lastReset != today else { return }
 
-        // New day — uncheck all tasks, update the reset date
         for task in tasks {
             task.isCompleted = false
         }
@@ -96,6 +113,17 @@ struct TasksView: View {
         try? modelContext.save()
         saveRecord(from: tasks)
         WidgetCenter.shared.reloadAllTimelines()
+
+        if tasks.allSatisfy(\.isCompleted) && !tasks.isEmpty {
+            withAnimation(.spring()) {
+                showCelebration = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                withAnimation(.easeOut(duration: 0.3)) {
+                    showCelebration = false
+                }
+            }
+        }
     }
 
     private func addTask(title: String) {
