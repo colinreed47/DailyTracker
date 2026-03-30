@@ -14,15 +14,18 @@ struct TasksView: View {
     private var todayString: String { Date().dayString }
 
     var body: some View {
-        ZStack(alignment: .top) {
+        ZStack {
             navigationContent
 
             if showCelebration {
                 ConfettiView()
 
-                celebrationBanner
-                    .padding(.top, 60)
-                    .transition(.move(edge: .top).combined(with: .opacity))
+                Text("All done! 🎉")
+                    .font(.system(size: 44, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.35), radius: 12, y: 4)
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
             }
         }
     }
@@ -80,15 +83,6 @@ struct TasksView: View {
         }
     }
 
-    private var celebrationBanner: some View {
-        Text("All done! 🎉")
-            .font(.subheadline.bold())
-            .foregroundStyle(.white)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(Color.green, in: Capsule())
-            .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
-    }
 
     // MARK: - Day Reset
 

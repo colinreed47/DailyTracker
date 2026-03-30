@@ -6,11 +6,13 @@ private struct ConfettiPiece: Identifiable {
     let color: Color
     let width: CGFloat
     let height: CGFloat
+    let isCircle: Bool
     let initialAngle: Double
     let spinDegrees: Double
     let delay: Double
     let fallDuration: Double
-    let xDrift: CGFloat  // normalized (-0.1...0.1 of screen width)
+    let xDrift: CGFloat
+    let startY: CGFloat  // slight above-screen offset for depth variety
 }
 
 struct ConfettiView: View {
@@ -18,30 +20,41 @@ struct ConfettiView: View {
     @State private var falling = false
 
     private static let palette: [Color] = [
-        .red, .orange, .yellow, .green, .blue, .purple, .pink, .cyan, .mint, .teal
+        .red, Color(red: 1, green: 0.6, blue: 0),  // orange
+        Color(red: 1, green: 0.85, blue: 0),        // gold
+        .green, Color(red: 0.2, green: 0.8, blue: 0.4),
+        .blue, Color(red: 0.4, green: 0.2, blue: 1), // purple
+        .pink, .cyan, .mint,
+        Color(red: 1, green: 0.3, blue: 0.5),       // hot pink
     ]
 
     var body: some View {
         GeometryReader { geo in
             ZStack {
                 ForEach(pieces) { piece in
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(piece.color)
-                        .frame(width: piece.width, height: piece.height)
-                        .rotationEffect(.degrees(
-                            falling
-                                ? piece.initialAngle + piece.spinDegrees
-                                : piece.initialAngle
-                        ))
-                        .offset(
-                            x: piece.normalizedX * geo.size.width
-                                + (falling ? piece.xDrift * geo.size.width : 0),
-                            y: falling ? geo.size.height + 60 : -30
-                        )
-                        .animation(
-                            .easeIn(duration: piece.fallDuration).delay(piece.delay),
-                            value: falling
-                        )
+                    Group {
+                        if piece.isCircle {
+                            Circle()
+                                .fill(piece.color)
+                                .frame(width: piece.width, height: piece.width)
+                        } else {
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(piece.color)
+                                .frame(width: piece.width, height: piece.height)
+                        }
+                    }
+                    .rotationEffect(.degrees(
+                        falling ? piece.initialAngle + piece.spinDegrees : piece.initialAngle
+                    ))
+                    .offset(
+                        x: piece.normalizedX * geo.size.width
+                            + (falling ? piece.xDrift * geo.size.width : 0),
+                        y: falling ? geo.size.height + 80 : piece.startY
+                    )
+                    .animation(
+                        .easeIn(duration: piece.fallDuration).delay(piece.delay),
+                        value: falling
+                    )
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -57,18 +70,21 @@ struct ConfettiView: View {
     }
 
     private static func generate() -> [ConfettiPiece] {
-        (0..<90).map { i in
-            ConfettiPiece(
+        (0..<120).map { i in
+            let isCircle = i % 5 == 0
+            return ConfettiPiece(
                 id: i,
-                normalizedX: CGFloat(i) / 90 + CGFloat.random(in: -0.01...0.01),
+                normalizedX: CGFloat(i) / 120 + CGFloat.random(in: -0.02...0.02),
                 color: palette[i % palette.count],
-                width: CGFloat.random(in: 6...12),
-                height: CGFloat.random(in: 8...16),
+                width: CGFloat.random(in: 7...13),
+                height: isCircle ? CGFloat.random(in: 7...13) : CGFloat.random(in: 10...20),
+                isCircle: isCircle,
                 initialAngle: Double.random(in: 0...360),
-                spinDegrees: Double.random(in: 180...540) * (i % 2 == 0 ? 1 : -1),
-                delay: Double.random(in: 0...1.2),
-                fallDuration: Double.random(in: 2.0...4.0),
-                xDrift: CGFloat.random(in: -0.12...0.12)
+                spinDegrees: Double.random(in: 200...600) * (i % 2 == 0 ? 1 : -1),
+                delay: Double.random(in: 0...1.4),
+                fallDuration: Double.random(in: 2.2...4.5),
+                xDrift: CGFloat.random(in: -0.1...0.1),
+                startY: CGFloat.random(in: -80 ... -20)
             )
         }
     }
