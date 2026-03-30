@@ -1,0 +1,385 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		118C0F22367D774D5FD7774C /* DailyTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EB2BA57017D9FD563B1573 /* DailyTrackerApp.swift */; };
+		15945A06C699FE17F9E22EC1 /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FEAB197897467271700014 /* TasksView.swift */; };
+		268EEED2A70A615A922D6AE7 /* DayRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E66163C7207B3976AF2431 /* DayRecord.swift */; };
+		2AFF3DF30C2C22D7CAE30685 /* DaySummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75553787052705366B09D060 /* DaySummaryView.swift */; };
+		4DEF879BCCA7FBD0F6506C25 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D937647AD19BC52A21212AE6 /* TaskItem.swift */; };
+		5C69DADB76C69A831A20AC96 /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5BA64BEA022D0C567C233A /* TaskRowView.swift */; };
+		77B69659F387C061046EA5B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9FE62685A70CE5AFE5BC4A82 /* Assets.xcassets */; };
+		98E0AC4FD85C2D4C12DF35E2 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F81409C5771A7C92E801AE /* AddTaskView.swift */; };
+		B1F9561541640D126E0282FB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D9163D5D71D4DE69D45A84D /* ContentView.swift */; };
+		C37CFBC13D006CAAC86E4F16 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8030EF6AEF9AF0E1158E04A6 /* CalendarView.swift */; };
+		D10340D1039E6BCA4C912AA0 /* DateFormatter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9B5CB576E4BB2B60F7F89E /* DateFormatter+Extensions.swift */; };
+		FE272E2C696E271348FD3C39 /* DayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18E62EF1DDD99BC2146C50F /* DayCell.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		17EB2BA57017D9FD563B1573 /* DailyTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyTrackerApp.swift; sourceTree = "<group>"; };
+		2D9163D5D71D4DE69D45A84D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		3322E456E0F79BE16FDA13AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		33FEAB197897467271700014 /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
+		4B0D7FB4679E5A1BC74CA90E /* DailyTracker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DailyTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F5BA64BEA022D0C567C233A /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
+		75553787052705366B09D060 /* DaySummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaySummaryView.swift; sourceTree = "<group>"; };
+		8030EF6AEF9AF0E1158E04A6 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		9FE62685A70CE5AFE5BC4A82 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BE9B5CB576E4BB2B60F7F89E /* DateFormatter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extensions.swift"; sourceTree = "<group>"; };
+		C18E62EF1DDD99BC2146C50F /* DayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCell.swift; sourceTree = "<group>"; };
+		D6F81409C5771A7C92E801AE /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
+		D937647AD19BC52A21212AE6 /* TaskItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItem.swift; sourceTree = "<group>"; };
+		E4E66163C7207B3976AF2431 /* DayRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayRecord.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		01487B95FCC939BFDEBD204B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E4E66163C7207B3976AF2431 /* DayRecord.swift */,
+				D937647AD19BC52A21212AE6 /* TaskItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		0ACCBA373107F9D38FB70CF2 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				8030EF6AEF9AF0E1158E04A6 /* CalendarView.swift */,
+				C18E62EF1DDD99BC2146C50F /* DayCell.swift */,
+				75553787052705366B09D060 /* DaySummaryView.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		228A8C0C05DBF3A732DCC268 /* DailyTracker */ = {
+			isa = PBXGroup;
+			children = (
+				9FE62685A70CE5AFE5BC4A82 /* Assets.xcassets */,
+				2D9163D5D71D4DE69D45A84D /* ContentView.swift */,
+				17EB2BA57017D9FD563B1573 /* DailyTrackerApp.swift */,
+				3322E456E0F79BE16FDA13AF /* Info.plist */,
+				F05A6A38EEA1A2020607AC9D /* Extensions */,
+				01487B95FCC939BFDEBD204B /* Models */,
+				AE1F83DB664A9801AB4F2094 /* Views */,
+			);
+			path = DailyTracker;
+			sourceTree = "<group>";
+		};
+		680656F481C76F5761FD65A9 /* Tasks */ = {
+			isa = PBXGroup;
+			children = (
+				D6F81409C5771A7C92E801AE /* AddTaskView.swift */,
+				5F5BA64BEA022D0C567C233A /* TaskRowView.swift */,
+				33FEAB197897467271700014 /* TasksView.swift */,
+			);
+			path = Tasks;
+			sourceTree = "<group>";
+		};
+		AE1F83DB664A9801AB4F2094 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0ACCBA373107F9D38FB70CF2 /* Calendar */,
+				680656F481C76F5761FD65A9 /* Tasks */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BA48DCA08FEA54511BFC456B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4B0D7FB4679E5A1BC74CA90E /* DailyTracker.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E9DF80D79DF660B57EF0F010 = {
+			isa = PBXGroup;
+			children = (
+				228A8C0C05DBF3A732DCC268 /* DailyTracker */,
+				BA48DCA08FEA54511BFC456B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F05A6A38EEA1A2020607AC9D /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				BE9B5CB576E4BB2B60F7F89E /* DateFormatter+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A9F3A97865027AB61793447D /* DailyTracker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 88A282B57F02C15AD79B6749 /* Build configuration list for PBXNativeTarget "DailyTracker" */;
+			buildPhases = (
+				D72D68066CBB61049072E721 /* Sources */,
+				2B893B7C9423D015AA02ECBC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DailyTracker;
+			packageProductDependencies = (
+			);
+			productName = DailyTracker;
+			productReference = 4B0D7FB4679E5A1BC74CA90E /* DailyTracker.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4659324EA45EB8A91DD7315F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = A9F43C4C2F90FFEC5155C277 /* Build configuration list for PBXProject "DailyTracker" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E9DF80D79DF660B57EF0F010;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = BA48DCA08FEA54511BFC456B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A9F3A97865027AB61793447D /* DailyTracker */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2B893B7C9423D015AA02ECBC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				77B69659F387C061046EA5B0 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D72D68066CBB61049072E721 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				98E0AC4FD85C2D4C12DF35E2 /* AddTaskView.swift in Sources */,
+				C37CFBC13D006CAAC86E4F16 /* CalendarView.swift in Sources */,
+				B1F9561541640D126E0282FB /* ContentView.swift in Sources */,
+				118C0F22367D774D5FD7774C /* DailyTrackerApp.swift in Sources */,
+				D10340D1039E6BCA4C912AA0 /* DateFormatter+Extensions.swift in Sources */,
+				FE272E2C696E271348FD3C39 /* DayCell.swift in Sources */,
+				268EEED2A70A615A922D6AE7 /* DayRecord.swift in Sources */,
+				2AFF3DF30C2C22D7CAE30685 /* DaySummaryView.swift in Sources */,
+				4DEF879BCCA7FBD0F6506C25 /* TaskItem.swift in Sources */,
+				5C69DADB76C69A831A20AC96 /* TaskRowView.swift in Sources */,
+				15945A06C699FE17F9E22EC1 /* TasksView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		9D0F2E4618B7EDB6819D0FA1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = DailyTracker/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.colinreed.DailyTracker;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C0E10542ABA477CF0ACD941F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		CE14A4B2EC76D11EAC7B89A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = DailyTracker/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.colinreed.DailyTracker;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E49AE67410BBDFE60973A60A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		88A282B57F02C15AD79B6749 /* Build configuration list for PBXNativeTarget "DailyTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE14A4B2EC76D11EAC7B89A7 /* Debug */,
+				9D0F2E4618B7EDB6819D0FA1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A9F43C4C2F90FFEC5155C277 /* Build configuration list for PBXProject "DailyTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E49AE67410BBDFE60973A60A /* Debug */,
+				C0E10542ABA477CF0ACD941F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4659324EA45EB8A91DD7315F /* Project object */;
+}
