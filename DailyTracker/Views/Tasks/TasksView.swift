@@ -88,10 +88,10 @@ struct TasksView: View {
 
     private func performDayResetIfNeeded() {
         let today = todayString
-        let lastReset = UserDefaults.standard.string(forKey: "lastResetDate")
+        let lastReset = SharedDataStore.sharedDefaults.string(forKey: "lastResetDate")
 
         if lastReset == nil {
-            UserDefaults.standard.set(today, forKey: "lastResetDate")
+            SharedDataStore.sharedDefaults.set(today, forKey: "lastResetDate")
             saveRecord(from: tasks)
             return
         }
@@ -101,7 +101,7 @@ struct TasksView: View {
         for task in tasks {
             task.isCompleted = false
         }
-        UserDefaults.standard.set(today, forKey: "lastResetDate")
+        SharedDataStore.sharedDefaults.set(today, forKey: "lastResetDate")
         try? modelContext.save()
         saveRecord(from: tasks)
     }

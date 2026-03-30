@@ -42,10 +42,21 @@ struct TaskListProvider: TimelineProvider {
     private func fetchSnapshots() -> [TaskSnapshot] {
         let container = SharedDataStore.makeContainer()
         let context = ModelContext(container)
+        resetTasksIfNewDay(context: context)
         let tasks = (try? context.fetch(
             FetchDescriptor<TaskItem>(sortBy: [SortDescriptor(\.orderIndex)])
         )) ?? []
         return tasks.map { TaskSnapshot(id: $0.id, title: $0.title, isCompleted: $0.isCompleted) }
+    }
+
+    private func resetTasksIfNewDay(context: ModelContext) {
+        let today = DateFormatter.dayFormatter.string(from: Date())
+        let defaults = SharedDataStore.sharedDefaults
+        guard defaults.string(forKey: "lastResetDate") != today else { return }
+        let tasks = (try? context.fetch(FetchDescriptor<TaskItem>())) ?? []
+        for task in tasks { task.isCompleted = false }
+        try? context.save()
+        defaults.set(today, forKey: "lastResetDate")
     }
 }
 

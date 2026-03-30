@@ -34,12 +34,23 @@ struct TaskCountProvider: TimelineProvider {
     private func makeEntry() -> TaskCountEntry {
         let container = SharedDataStore.makeContainer()
         let context = ModelContext(container)
+        resetTasksIfNewDay(context: context)
         let tasks = (try? context.fetch(FetchDescriptor<TaskItem>())) ?? []
         return TaskCountEntry(
             date: Date(),
             completed: tasks.filter(\.isCompleted).count,
             total: tasks.count
         )
+    }
+
+    private func resetTasksIfNewDay(context: ModelContext) {
+        let today = DateFormatter.dayFormatter.string(from: Date())
+        let defaults = SharedDataStore.sharedDefaults
+        guard defaults.string(forKey: "lastResetDate") != today else { return }
+        let tasks = (try? context.fetch(FetchDescriptor<TaskItem>())) ?? []
+        for task in tasks { task.isCompleted = false }
+        try? context.save()
+        defaults.set(today, forKey: "lastResetDate")
     }
 }
 

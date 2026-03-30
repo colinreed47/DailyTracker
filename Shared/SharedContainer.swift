@@ -4,6 +4,11 @@ import Foundation
 enum SharedDataStore {
     static let appGroupID = "group.com.colinreed.DailyTracker"
 
+    /// UserDefaults accessible by both the app and the widget extension.
+    static var sharedDefaults: UserDefaults {
+        UserDefaults(suiteName: appGroupID) ?? .standard
+    }
+
     static func makeContainer() -> ModelContainer {
         let schema = Schema([TaskItem.self, DayRecord.self])
 
