@@ -29,7 +29,9 @@ struct CalendarView: View {
                     LazyVGrid(columns: columns, spacing: 6) {
                         ForEach(Array(calendarDays.enumerated()), id: \.offset) { _, dayString in
                             if dayString.isEmpty {
-                                Color.clear.aspectRatio(1, contentMode: .fill)
+                                Color.clear
+                                .frame(maxWidth: .infinity)
+                                .aspectRatio(1, contentMode: .fit)
                             } else {
                                 DayCell(
                                     dateString: dayString,

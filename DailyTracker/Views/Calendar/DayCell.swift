@@ -19,7 +19,6 @@ struct DayCell: View {
         dateString <= Date().dayString
     }
 
-    /// The completion-based color for this day, if any.
     private var completionColor: Color? {
         guard let record, record.totalTaskCount > 0 else { return nil }
         let ratio = record.completionRatio
@@ -29,7 +28,6 @@ struct DayCell: View {
         return nil
     }
 
-    /// Background color of the circle/cell.
     private var circleColor: Color? {
         if isToday { return completionColor ?? .accentColor }
         return completionColor
@@ -38,17 +36,24 @@ struct DayCell: View {
     var body: some View {
         Button(action: onTap) {
             ZStack {
+                // Transparent base guarantees the cell fills its column
+                Color.clear
+
                 if let color = circleColor {
                     Circle()
                         .fill(isToday ? color : color.opacity(0.28))
+                        .padding(2)
                 }
 
                 Text(dayNumber)
                     .font(.system(size: 15, weight: isToday ? .semibold : .regular))
                     .foregroundStyle(isToday ? .white : .primary)
+                    .minimumScaleFactor(0.6)
+                    .lineLimit(1)
             }
-            .frame(minWidth: 0, minHeight: 0)
+            .frame(maxWidth: .infinity)
             .aspectRatio(1, contentMode: .fit)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
