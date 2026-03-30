@@ -5,6 +5,36 @@ options:
     iOS: "17.0"
   createIntermediateGroups: true
 
+schemes:
+  DailyTracker:
+    build:
+      targets:
+        DailyTracker: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+    archive:
+      config: Release
+
+  TaskListWidget:
+    build:
+      targets:
+        DailyTrackerWidget: all
+    run:
+      config: Debug
+      environmentVariables:
+        _XCWidgetKind: TaskListWidget
+
+  TaskCountWidget:
+    build:
+      targets:
+        DailyTrackerWidget: all
+    run:
+      config: Debug
+      environmentVariables:
+        _XCWidgetKind: TaskCountWidget
+
 targets:
   DailyTracker:
     type: application
