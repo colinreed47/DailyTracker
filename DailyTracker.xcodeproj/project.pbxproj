@@ -239,10 +239,20 @@
 					7B0DBE9DE0524BAA49BB36AE = {
 						DevelopmentTeam = S28599VGAR;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 					A9F3A97865027AB61793447D = {
 						DevelopmentTeam = S28599VGAR;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
