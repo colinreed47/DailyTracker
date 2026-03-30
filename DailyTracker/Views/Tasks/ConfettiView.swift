@@ -2,7 +2,7 @@ import SwiftUI
 
 private struct ConfettiPiece: Identifiable {
     let id: Int
-    let normalizedX: CGFloat
+    let normalizedX: CGFloat   // 0...1 of screen width
     let color: Color
     let width: CGFloat
     let height: CGFloat
@@ -11,8 +11,8 @@ private struct ConfettiPiece: Identifiable {
     let spinDegrees: Double
     let delay: Double
     let fallDuration: Double
-    let xDrift: CGFloat
-    let startY: CGFloat  // slight above-screen offset for depth variety
+    let xDrift: CGFloat        // normalized drift added during fall
+    let startY: CGFloat        // above-screen start (negative)
 }
 
 struct ConfettiView: View {
@@ -20,12 +20,16 @@ struct ConfettiView: View {
     @State private var falling = false
 
     private static let palette: [Color] = [
-        .red, Color(red: 1, green: 0.6, blue: 0),  // orange
-        Color(red: 1, green: 0.85, blue: 0),        // gold
-        .green, Color(red: 0.2, green: 0.8, blue: 0.4),
-        .blue, Color(red: 0.4, green: 0.2, blue: 1), // purple
-        .pink, .cyan, .mint,
-        Color(red: 1, green: 0.3, blue: 0.5),       // hot pink
+        .red,
+        Color(red: 1,   green: 0.6,  blue: 0),    // orange
+        Color(red: 1,   green: 0.85, blue: 0),    // gold
+        .green,
+        Color(red: 0.2, green: 0.8,  blue: 0.4),  // lime
+        .blue,
+        Color(red: 0.4, green: 0.2,  blue: 1),    // purple
+        .pink,
+        Color(red: 1,   green: 0.3,  blue: 0.5),  // hot pink
+        .cyan, .mint, .teal,
     ]
 
     var body: some View {
@@ -44,9 +48,12 @@ struct ConfettiView: View {
                         }
                     }
                     .rotationEffect(.degrees(
-                        falling ? piece.initialAngle + piece.spinDegrees : piece.initialAngle
+                        falling
+                            ? piece.initialAngle + piece.spinDegrees
+                            : piece.initialAngle
                     ))
-                    .offset(
+                    // .position uses absolute coords from top-left of the GeometryReader
+                    .position(
                         x: piece.normalizedX * geo.size.width
                             + (falling ? piece.xDrift * geo.size.width : 0),
                         y: falling ? geo.size.height + 80 : piece.startY
@@ -57,10 +64,10 @@ struct ConfettiView: View {
                     )
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(width: geo.size.width, height: geo.size.height)
         }
-        .allowsHitTesting(false)
         .ignoresSafeArea()
+        .allowsHitTesting(false)
         .onAppear {
             pieces = Self.generate()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
@@ -83,8 +90,8 @@ struct ConfettiView: View {
                 spinDegrees: Double.random(in: 200...600) * (i % 2 == 0 ? 1 : -1),
                 delay: Double.random(in: 0...1.4),
                 fallDuration: Double.random(in: 2.2...4.5),
-                xDrift: CGFloat.random(in: -0.1...0.1),
-                startY: CGFloat.random(in: -80 ... -20)
+                xDrift: CGFloat.random(in: -0.08...0.08),
+                startY: CGFloat.random(in: -80 ... -10)
             )
         }
     }
