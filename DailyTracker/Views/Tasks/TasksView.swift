@@ -14,6 +14,20 @@ struct TasksView: View {
     private var todayString: String { Date().dayString }
 
     var body: some View {
+        ZStack(alignment: .top) {
+            navigationContent
+
+            if showCelebration {
+                ConfettiView()
+
+                celebrationBanner
+                    .padding(.top, 60)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+    }
+
+    private var navigationContent: some View {
         NavigationStack {
             Group {
                 if tasks.isEmpty {
@@ -48,14 +62,6 @@ struct TasksView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
-                }
-            }
-            .overlay(alignment: .top) {
-                if showCelebration {
-                    celebrationBanner
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .padding(.top, 8)
-                        .allowsHitTesting(false)
                 }
             }
             .sheet(isPresented: $showingAddTask) {
@@ -118,8 +124,8 @@ struct TasksView: View {
             withAnimation(.spring()) {
                 showCelebration = true
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                withAnimation(.easeOut(duration: 0.3)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+                withAnimation(.easeOut(duration: 0.4)) {
                     showCelebration = false
                 }
             }
