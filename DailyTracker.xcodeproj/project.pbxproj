@@ -14,6 +14,7 @@
 		2AFF3DF30C2C22D7CAE30685 /* DaySummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75553787052705366B09D060 /* DaySummaryView.swift */; };
 		347C706CCFA44A5C0209A460 /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38D254B50C0D0FFCE928F8E /* SharedContainer.swift */; };
 		3958BDD52076E7230A0D83D6 /* DayRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E89827E259C1DAFA8A7019 /* DayRecord.swift */; };
+		4420D6B38ADCE066C909C016 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F67F57AB3C6132827907B170 /* ConfettiView.swift */; };
 		49761CFEF8E8E3A09576E922 /* DateFormatter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE699B35287979F7B14ACEF /* DateFormatter+Extensions.swift */; };
 		4A4D89A9BD7469E67BC16FBD /* TaskCountWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B960BB55CD3FF92748561C93 /* TaskCountWidget.swift */; };
 		4D7D8782D32C599E4E16A304 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824C7FFBC75D93A81775150E /* TaskItem.swift */; };
@@ -80,6 +81,7 @@
 		C18E62EF1DDD99BC2146C50F /* DayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCell.swift; sourceTree = "<group>"; };
 		D6F81409C5771A7C92E801AE /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
 		EFE699B35287979F7B14ACEF /* DateFormatter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extensions.swift"; sourceTree = "<group>"; };
+		F67F57AB3C6132827907B170 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		FAD8DB2C0A3B58058FB50223 /* DailyTracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DailyTracker.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -129,6 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				D6F81409C5771A7C92E801AE /* AddTaskView.swift */,
+				F67F57AB3C6132827907B170 /* ConfettiView.swift */,
 				5F5BA64BEA022D0C567C233A /* TaskRowView.swift */,
 				33FEAB197897467271700014 /* TasksView.swift */,
 			);
@@ -317,6 +320,7 @@
 			files = (
 				98E0AC4FD85C2D4C12DF35E2 /* AddTaskView.swift in Sources */,
 				C37CFBC13D006CAAC86E4F16 /* CalendarView.swift in Sources */,
+				4420D6B38ADCE066C909C016 /* ConfettiView.swift in Sources */,
 				B1F9561541640D126E0282FB /* ContentView.swift in Sources */,
 				118C0F22367D774D5FD7774C /* DailyTrackerApp.swift in Sources */,
 				49761CFEF8E8E3A09576E922 /* DateFormatter+Extensions.swift in Sources */,

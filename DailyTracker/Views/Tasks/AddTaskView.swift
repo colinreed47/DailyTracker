@@ -30,6 +30,7 @@ struct AddTaskView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") { submit() }
                         .disabled(trimmed.isEmpty)
+                        .tint(trimmed.isEmpty ? .secondary : .blue)
                 }
             }
             .onAppear { isFocused = true }
