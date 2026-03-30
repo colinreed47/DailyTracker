@@ -53,6 +53,9 @@ targets:
           - UIInterfaceOrientationPortrait
     entitlements:
       path: DailyTracker/DailyTracker.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.colinreed.DailyTracker
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.colinreed.DailyTracker
@@ -85,6 +88,9 @@ targets:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     entitlements:
       path: DailyTrackerWidget/DailyTrackerWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.colinreed.DailyTracker
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.colinreed.DailyTracker.widget
