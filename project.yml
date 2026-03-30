@@ -12,6 +12,7 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - path: DailyTracker
+      - path: Shared
     info:
       path: DailyTracker/Info.plist
       properties:
@@ -20,6 +21,8 @@ targets:
           UIColorName: ""
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+    entitlements:
+      path: DailyTracker/DailyTracker.entitlements
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.colinreed.DailyTracker
@@ -27,8 +30,36 @@ targets:
         IPHONEOS_DEPLOYMENT_TARGET: "17.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ENABLE_PREVIEWS: "YES"
+        DEVELOPMENT_TEAM: S28599VGAR
+        CODE_SIGN_STYLE: Automatic
       configs:
         Debug:
           DEBUG_INFORMATION_FORMAT: dwarf
         Release:
           SWIFT_OPTIMIZATION_LEVEL: "-O"
+    dependencies:
+      - target: DailyTrackerWidget
+
+  DailyTrackerWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: DailyTrackerWidget
+      - path: Shared
+    info:
+      path: DailyTrackerWidget/Info.plist
+      properties:
+        CFBundleDisplayName: DailyTrackerWidget
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: DailyTrackerWidget/DailyTrackerWidget.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.colinreed.DailyTracker.widget
+        SWIFT_VERSION: "5.0"
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        DEVELOPMENT_TEAM: S28599VGAR
+        CODE_SIGN_STYLE: Automatic
+        SKIP_INSTALL: "YES"

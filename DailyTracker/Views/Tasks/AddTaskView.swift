@@ -34,7 +34,7 @@ struct AddTaskView: View {
             }
             .onAppear { isFocused = true }
         }
-        .presentationDetents([.height(200)])
+        .presentationDetents([.height(400)])
     }
 
     private func submit() {

@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct TasksView: View {
     @Environment(\.modelContext) private var modelContext
@@ -94,14 +95,15 @@ struct TasksView: View {
         task.isCompleted.toggle()
         try? modelContext.save()
         saveRecord(from: tasks)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     private func addTask(title: String) {
         let task = TaskItem(title: title, orderIndex: tasks.count)
         modelContext.insert(task)
         try? modelContext.save()
-        // Build the updated list manually so the record is accurate before @Query refreshes
         saveRecord(from: tasks + [task])
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     private func deleteTasks(at offsets: IndexSet) {
@@ -112,6 +114,7 @@ struct TasksView: View {
         }
         try? modelContext.save()
         saveRecord(from: remaining)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     // MARK: - Persistence

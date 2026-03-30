@@ -27,7 +27,7 @@ struct CalendarView: View {
 
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 6) {
-                        ForEach(calendarDays, id: \.self) { dayString in
+                        ForEach(Array(calendarDays.enumerated()), id: \.offset) { _, dayString in
                             if dayString.isEmpty {
                                 Color.clear.aspectRatio(1, contentMode: .fill)
                             } else {
