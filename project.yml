@@ -1,4 +1,9 @@
 name: DailyHabits
+
+packages:
+  Supabase:
+    url: https://github.com/supabase/supabase-swift
+    from: "2.0.0"
 options:
   bundleIdPrefix: com.colinreed
   deploymentTarget:
@@ -81,6 +86,8 @@ targets:
           SWIFT_OPTIMIZATION_LEVEL: "-O"
     dependencies:
       - target: DailyHabitsWidget
+      - package: Supabase
+        product: Supabase
 
   DailyHabitsWidget:
     type: app-extension
@@ -108,3 +115,6 @@ targets:
         DEVELOPMENT_TEAM: S28599VGAR
         CODE_SIGN_STYLE: Automatic
         SKIP_INSTALL: "YES"
+    dependencies:
+      - package: Supabase
+        product: Supabase

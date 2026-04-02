@@ -78,6 +78,7 @@ struct TasksView: View {
             .onChange(of: scenePhase) { _, newPhase in
                 if newPhase == .active {
                     performDayResetIfNeeded()
+                    SyncEngine.shared.syncOnForeground(modelContext: modelContext)
                 }
             }
         }
@@ -100,6 +101,8 @@ struct TasksView: View {
 
         for task in tasks {
             task.isCompleted = false
+            task.updatedAt   = Date()
+            SharedDataStore.markPending(id: task.id)
         }
         SharedDataStore.sharedDefaults.set(today, forKey: "lastResetDate")
         try? modelContext.save()
@@ -110,6 +113,8 @@ struct TasksView: View {
 
     private func toggleTask(_ task: TaskItem) {
         task.isCompleted.toggle()
+        task.updatedAt = Date()
+        SharedDataStore.markPending(id: task.id)
         try? modelContext.save()
         saveRecord(from: tasks)
         WidgetCenter.shared.reloadAllTimelines()
@@ -129,6 +134,7 @@ struct TasksView: View {
     private func addTask(title: String) {
         let task = TaskItem(title: title, orderIndex: tasks.count)
         modelContext.insert(task)
+        SharedDataStore.markPending(id: task.id)
         try? modelContext.save()
         saveRecord(from: tasks + [task])
         WidgetCenter.shared.reloadAllTimelines()
@@ -137,6 +143,7 @@ struct TasksView: View {
     private func deleteTasks(at offsets: IndexSet) {
         var remaining = tasks
         for index in offsets.sorted(by: >) {
+            SharedDataStore.markPendingDelete(id: tasks[index].id)
             modelContext.delete(tasks[index])
             remaining.remove(at: index)
         }
@@ -149,12 +156,14 @@ struct TasksView: View {
 
     private func saveRecord(from taskList: [TaskItem]) {
         let today = todayString
-        let allTitles = taskList.map { $0.title }
+        let allTitles       = taskList.map { $0.title }
         let completedTitles = taskList.filter { $0.isCompleted }.map { $0.title }
 
         if let existing = dayRecords.first(where: { $0.dateString == today }) {
-            existing.allTaskTitles = allTitles
+            existing.allTaskTitles       = allTitles
             existing.completedTaskTitles = completedTitles
+            existing.updatedAt           = Date()
+            SharedDataStore.markPending(id: existing.id)
         } else {
             let record = DayRecord(
                 dateString: today,
@@ -162,6 +171,7 @@ struct TasksView: View {
                 completedTaskTitles: completedTitles
             )
             modelContext.insert(record)
+            SharedDataStore.markPending(id: record.id)
         }
         try? modelContext.save()
     }

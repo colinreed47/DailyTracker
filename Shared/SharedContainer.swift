@@ -28,4 +28,42 @@ enum SharedDataStore {
         // Fallback: App Group not provisioned yet (e.g. first Xcode run)
         return try! ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema)])
     }
+
+    // MARK: - Pending Sync Tracking
+
+    private static let pendingSyncKey  = "pendingSyncIDs"
+    private static let pendingDeleteKey = "pendingDeleteIDs"
+
+    /// IDs of local objects that have been mutated and need to be upserted to Supabase.
+    static var pendingSyncIDs: Set<String> {
+        get { Set((sharedDefaults.array(forKey: pendingSyncKey) as? [String]) ?? []) }
+        set { sharedDefaults.set(Array(newValue), forKey: pendingSyncKey) }
+    }
+
+    /// IDs of tasks that have been deleted locally and need to be deleted from Supabase.
+    static var pendingDeleteIDs: Set<String> {
+        get { Set((sharedDefaults.array(forKey: pendingDeleteKey) as? [String]) ?? []) }
+        set { sharedDefaults.set(Array(newValue), forKey: pendingDeleteKey) }
+    }
+
+    static func markPending(id: UUID) {
+        pendingSyncIDs.insert(id.uuidString)
+    }
+
+    static func markPendingDelete(id: UUID) {
+        pendingDeleteIDs.insert(id.uuidString)
+        pendingSyncIDs.remove(id.uuidString)   // no point upserting a deleted row
+    }
+
+    static func clearPending(ids: [UUID]) {
+        var current = pendingSyncIDs
+        ids.forEach { current.remove($0.uuidString) }
+        pendingSyncIDs = current
+    }
+
+    static func clearPendingDeletes(ids: [UUID]) {
+        var current = pendingDeleteIDs
+        ids.forEach { current.remove($0.uuidString) }
+        pendingDeleteIDs = current
+    }
 }
