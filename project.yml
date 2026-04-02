@@ -35,6 +35,15 @@ schemes:
       environmentVariables:
         _XCWidgetKind: TaskCountWidget
 
+  LockScreenTaskWidget:
+    build:
+      targets:
+        DailyTrackerWidget: all
+    run:
+      config: Debug
+      environmentVariables:
+        _XCWidgetKind: LockScreenTaskWidget
+
 targets:
   DailyTracker:
     type: application
