@@ -2,7 +2,7 @@ import SwiftData
 import Foundation
 
 enum SharedDataStore {
-    static let appGroupID = "group.com.colinreed.DailyTracker"
+    static let appGroupID = "group.com.colinreed.DailyHabits"
 
     /// UserDefaults accessible by both the app and the widget extension.
     static var sharedDefaults: UserDefaults {
@@ -16,7 +16,7 @@ enum SharedDataStore {
         if let groupURL = FileManager.default.containerURL(
             forSecurityApplicationGroupIdentifier: appGroupID
         ) {
-            let storeURL = groupURL.appendingPathComponent("DailyTracker.store")
+            let storeURL = groupURL.appendingPathComponent("DailyHabits.store")
             if let container = try? ModelContainer(
                 for: schema,
                 configurations: [ModelConfiguration(schema: schema, url: storeURL)]

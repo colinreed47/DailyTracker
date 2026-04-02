@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		0AC56C53EA118D0EF105D2D6 /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38D254B50C0D0FFCE928F8E /* SharedContainer.swift */; };
 		0C34203FAA5F3E6DE062ADE1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2AC0CB84E9ACA7E58911800 /* Assets.xcassets */; };
-		118C0F22367D774D5FD7774C /* DailyTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EB2BA57017D9FD563B1573 /* DailyTrackerApp.swift */; };
+		118C0F22367D774D5FD7774C /* DailyHabitsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EB2BA57017D9FD563B1573 /* DailyHabitsApp.swift */; };
 		15945A06C699FE17F9E22EC1 /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FEAB197897467271700014 /* TasksView.swift */; };
 		2AFF3DF30C2C22D7CAE30685 /* DaySummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75553787052705366B09D060 /* DaySummaryView.swift */; };
 		347C706CCFA44A5C0209A460 /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38D254B50C0D0FFCE928F8E /* SharedContainer.swift */; };
@@ -19,9 +19,9 @@
 		4A4D89A9BD7469E67BC16FBD /* TaskCountWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B960BB55CD3FF92748561C93 /* TaskCountWidget.swift */; };
 		4D7D8782D32C599E4E16A304 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824C7FFBC75D93A81775150E /* TaskItem.swift */; };
 		5C69DADB76C69A831A20AC96 /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5BA64BEA022D0C567C233A /* TaskRowView.swift */; };
-		63C2E48CB02B37AE39C954B0 /* DailyTrackerWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8E039126E712E16EEB32D1FB /* DailyTrackerWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		63C2E48CB02B37AE39C954B0 /* DailyHabitsWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8E039126E712E16EEB32D1FB /* DailyHabitsWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		67D948F842C8EBCCCBC1AE42 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824C7FFBC75D93A81775150E /* TaskItem.swift */; };
-		76DF17B0594C399B73B5E0F0 /* DailyTrackerWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBC5DF003510E45370A84FB2 /* DailyTrackerWidgetBundle.swift */; };
+		76DF17B0594C399B73B5E0F0 /* DailyHabitsWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBC5DF003510E45370A84FB2 /* DailyHabitsWidgetBundle.swift */; };
 		77B69659F387C061046EA5B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9FE62685A70CE5AFE5BC4A82 /* Assets.xcassets */; };
 		901FA824BB655E3F1B6A6619 /* DayRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E89827E259C1DAFA8A7019 /* DayRecord.swift */; };
 		98E0AC4FD85C2D4C12DF35E2 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F81409C5771A7C92E801AE /* AddTaskView.swift */; };
@@ -39,7 +39,7 @@
 			containerPortal = 4659324EA45EB8A91DD7315F /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 7B0DBE9DE0524BAA49BB36AE;
-			remoteInfo = DailyTrackerWidget;
+			remoteInfo = DailyHabitsWidget;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -50,7 +50,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				63C2E48CB02B37AE39C954B0 /* DailyTrackerWidget.appex in Embed Foundation Extensions */,
+				63C2E48CB02B37AE39C954B0 /* DailyHabitsWidget.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -59,30 +59,30 @@
 
 /* Begin PBXFileReference section */
 		03FBCD25DA7110C339C24282 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		17EB2BA57017D9FD563B1573 /* DailyTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyTrackerApp.swift; sourceTree = "<group>"; };
+		17EB2BA57017D9FD563B1573 /* DailyHabitsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyHabitsApp.swift; sourceTree = "<group>"; };
 		210E27EC55D603E71D9664B5 /* TaskListWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListWidget.swift; sourceTree = "<group>"; };
 		2D9163D5D71D4DE69D45A84D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		3322E456E0F79BE16FDA13AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		33FEAB197897467271700014 /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
 		39E89827E259C1DAFA8A7019 /* DayRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayRecord.swift; sourceTree = "<group>"; };
-		4B0D7FB4679E5A1BC74CA90E /* DailyTracker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DailyTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B0D7FB4679E5A1BC74CA90E /* DailyHabits.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DailyHabits.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F5BA64BEA022D0C567C233A /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
 		7444D4624C209E584F35F0E6 /* ToggleTaskIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleTaskIntent.swift; sourceTree = "<group>"; };
 		75553787052705366B09D060 /* DaySummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaySummaryView.swift; sourceTree = "<group>"; };
 		8030EF6AEF9AF0E1158E04A6 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
-		8079391D684A18A690800E8A /* DailyTrackerWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DailyTrackerWidget.entitlements; sourceTree = "<group>"; };
+		8079391D684A18A690800E8A /* DailyHabitsWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DailyHabitsWidget.entitlements; sourceTree = "<group>"; };
 		824C7FFBC75D93A81775150E /* TaskItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItem.swift; sourceTree = "<group>"; };
-		8E039126E712E16EEB32D1FB /* DailyTrackerWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = DailyTrackerWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E039126E712E16EEB32D1FB /* DailyHabitsWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = DailyHabitsWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FE62685A70CE5AFE5BC4A82 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A2AC0CB84E9ACA7E58911800 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A38D254B50C0D0FFCE928F8E /* SharedContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedContainer.swift; sourceTree = "<group>"; };
 		B960BB55CD3FF92748561C93 /* TaskCountWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCountWidget.swift; sourceTree = "<group>"; };
-		BBC5DF003510E45370A84FB2 /* DailyTrackerWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyTrackerWidgetBundle.swift; sourceTree = "<group>"; };
+		BBC5DF003510E45370A84FB2 /* DailyHabitsWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyHabitsWidgetBundle.swift; sourceTree = "<group>"; };
 		C18E62EF1DDD99BC2146C50F /* DayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCell.swift; sourceTree = "<group>"; };
 		D6F81409C5771A7C92E801AE /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
 		EFE699B35287979F7B14ACEF /* DateFormatter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extensions.swift"; sourceTree = "<group>"; };
 		F67F57AB3C6132827907B170 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
-		FAD8DB2C0A3B58058FB50223 /* DailyTracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DailyTracker.entitlements; sourceTree = "<group>"; };
+		FAD8DB2C0A3B58058FB50223 /* DailyHabits.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DailyHabits.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -104,17 +104,17 @@
 			path = Calendar;
 			sourceTree = "<group>";
 		};
-		228A8C0C05DBF3A732DCC268 /* DailyTracker */ = {
+		228A8C0C05DBF3A732DCC268 /* DailyHabits */ = {
 			isa = PBXGroup;
 			children = (
 				9FE62685A70CE5AFE5BC4A82 /* Assets.xcassets */,
 				2D9163D5D71D4DE69D45A84D /* ContentView.swift */,
-				FAD8DB2C0A3B58058FB50223 /* DailyTracker.entitlements */,
-				17EB2BA57017D9FD563B1573 /* DailyTrackerApp.swift */,
+				FAD8DB2C0A3B58058FB50223 /* DailyHabits.entitlements */,
+				17EB2BA57017D9FD563B1573 /* DailyHabitsApp.swift */,
 				3322E456E0F79BE16FDA13AF /* Info.plist */,
 				AE1F83DB664A9801AB4F2094 /* Views */,
 			);
-			path = DailyTracker;
+			path = DailyHabits;
 			sourceTree = "<group>";
 		};
 		4B54427063A00F35CBE30E97 /* Shared */ = {
@@ -138,18 +138,18 @@
 			path = Tasks;
 			sourceTree = "<group>";
 		};
-		891A7571DCEB1CE0B9AD33A2 /* DailyTrackerWidget */ = {
+		891A7571DCEB1CE0B9AD33A2 /* DailyHabitsWidget */ = {
 			isa = PBXGroup;
 			children = (
 				A2AC0CB84E9ACA7E58911800 /* Assets.xcassets */,
-				8079391D684A18A690800E8A /* DailyTrackerWidget.entitlements */,
-				BBC5DF003510E45370A84FB2 /* DailyTrackerWidgetBundle.swift */,
+				8079391D684A18A690800E8A /* DailyHabitsWidget.entitlements */,
+				BBC5DF003510E45370A84FB2 /* DailyHabitsWidgetBundle.swift */,
 				03FBCD25DA7110C339C24282 /* Info.plist */,
 				B960BB55CD3FF92748561C93 /* TaskCountWidget.swift */,
 				210E27EC55D603E71D9664B5 /* TaskListWidget.swift */,
 				7444D4624C209E584F35F0E6 /* ToggleTaskIntent.swift */,
 			);
-			path = DailyTrackerWidget;
+			path = DailyHabitsWidget;
 			sourceTree = "<group>";
 		};
 		AE1F83DB664A9801AB4F2094 /* Views */ = {
@@ -164,8 +164,8 @@
 		BA48DCA08FEA54511BFC456B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4B0D7FB4679E5A1BC74CA90E /* DailyTracker.app */,
-				8E039126E712E16EEB32D1FB /* DailyTrackerWidget.appex */,
+				4B0D7FB4679E5A1BC74CA90E /* DailyHabits.app */,
+				8E039126E712E16EEB32D1FB /* DailyHabitsWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -173,8 +173,8 @@
 		E9DF80D79DF660B57EF0F010 = {
 			isa = PBXGroup;
 			children = (
-				228A8C0C05DBF3A732DCC268 /* DailyTracker */,
-				891A7571DCEB1CE0B9AD33A2 /* DailyTrackerWidget */,
+				228A8C0C05DBF3A732DCC268 /* DailyHabits */,
+				891A7571DCEB1CE0B9AD33A2 /* DailyHabitsWidget */,
 				4B54427063A00F35CBE30E97 /* Shared */,
 				BA48DCA08FEA54511BFC456B /* Products */,
 			);
@@ -192,9 +192,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		7B0DBE9DE0524BAA49BB36AE /* DailyTrackerWidget */ = {
+		7B0DBE9DE0524BAA49BB36AE /* DailyHabitsWidget */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7120B12E56E52F9CD86F6B5F /* Build configuration list for PBXNativeTarget "DailyTrackerWidget" */;
+			buildConfigurationList = 7120B12E56E52F9CD86F6B5F /* Build configuration list for PBXNativeTarget "DailyHabitsWidget" */;
 			buildPhases = (
 				767936E04949F544279614DF /* Sources */,
 				F90CA4D3AC0A413B992DD432 /* Resources */,
@@ -203,16 +203,16 @@
 			);
 			dependencies = (
 			);
-			name = DailyTrackerWidget;
+			name = DailyHabitsWidget;
 			packageProductDependencies = (
 			);
-			productName = DailyTrackerWidget;
-			productReference = 8E039126E712E16EEB32D1FB /* DailyTrackerWidget.appex */;
+			productName = DailyHabitsWidget;
+			productReference = 8E039126E712E16EEB32D1FB /* DailyHabitsWidget.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		A9F3A97865027AB61793447D /* DailyTracker */ = {
+		A9F3A97865027AB61793447D /* DailyHabits */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 88A282B57F02C15AD79B6749 /* Build configuration list for PBXNativeTarget "DailyTracker" */;
+			buildConfigurationList = 88A282B57F02C15AD79B6749 /* Build configuration list for PBXNativeTarget "DailyHabits" */;
 			buildPhases = (
 				D72D68066CBB61049072E721 /* Sources */,
 				2B893B7C9423D015AA02ECBC /* Resources */,
@@ -223,11 +223,11 @@
 			dependencies = (
 				5B0C6BFE32B9C87E400BCFA0 /* PBXTargetDependency */,
 			);
-			name = DailyTracker;
+			name = DailyHabits;
 			packageProductDependencies = (
 			);
-			productName = DailyTracker;
-			productReference = 4B0D7FB4679E5A1BC74CA90E /* DailyTracker.app */;
+			productName = DailyHabits;
+			productReference = 4B0D7FB4679E5A1BC74CA90E /* DailyHabits.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -259,7 +259,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A9F43C4C2F90FFEC5155C277 /* Build configuration list for PBXProject "DailyTracker" */;
+			buildConfigurationList = A9F43C4C2F90FFEC5155C277 /* Build configuration list for PBXProject "DailyHabits" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -273,8 +273,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A9F3A97865027AB61793447D /* DailyTracker */,
-				7B0DBE9DE0524BAA49BB36AE /* DailyTrackerWidget */,
+				A9F3A97865027AB61793447D /* DailyHabits */,
+				7B0DBE9DE0524BAA49BB36AE /* DailyHabitsWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -303,7 +303,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76DF17B0594C399B73B5E0F0 /* DailyTrackerWidgetBundle.swift in Sources */,
+				76DF17B0594C399B73B5E0F0 /* DailyHabitsWidgetBundle.swift in Sources */,
 				ED377922826A34F72708E185 /* DateFormatter+Extensions.swift in Sources */,
 				3958BDD52076E7230A0D83D6 /* DayRecord.swift in Sources */,
 				0AC56C53EA118D0EF105D2D6 /* SharedContainer.swift in Sources */,
@@ -322,7 +322,7 @@
 				C37CFBC13D006CAAC86E4F16 /* CalendarView.swift in Sources */,
 				4420D6B38ADCE066C909C016 /* ConfettiView.swift in Sources */,
 				B1F9561541640D126E0282FB /* ContentView.swift in Sources */,
-				118C0F22367D774D5FD7774C /* DailyTrackerApp.swift in Sources */,
+				118C0F22367D774D5FD7774C /* DailyHabitsApp.swift in Sources */,
 				49761CFEF8E8E3A09576E922 /* DateFormatter+Extensions.swift in Sources */,
 				FE272E2C696E271348FD3C39 /* DayCell.swift in Sources */,
 				901FA824BB655E3F1B6A6619 /* DayRecord.swift in Sources */,
@@ -339,7 +339,7 @@
 /* Begin PBXTargetDependency section */
 		5B0C6BFE32B9C87E400BCFA0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 7B0DBE9DE0524BAA49BB36AE /* DailyTrackerWidget */;
+			target = 7B0DBE9DE0524BAA49BB36AE /* DailyHabitsWidget */;
 			targetProxy = A0C3D96E1064268C5B30481D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -348,17 +348,17 @@
 		0AF007B4299E5B0BA7F3D6D4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = DailyTrackerWidget/DailyTrackerWidget.entitlements;
+				CODE_SIGN_ENTITLEMENTS = DailyHabitsWidget/DailyHabitsWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S28599VGAR;
-				INFOPLIST_FILE = DailyTrackerWidget/Info.plist;
+				INFOPLIST_FILE = DailyHabitsWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.colinreed.DailyTracker.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.colinreed.DailyHabits.widget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -370,18 +370,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = DailyTracker/DailyTracker.entitlements;
+				CODE_SIGN_ENTITLEMENTS = DailyHabits/DailyHabits.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S28599VGAR;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = DailyTracker/Info.plist;
+				INFOPLIST_FILE = DailyHabits/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.colinreed.DailyTracker;
+				PRODUCT_BUNDLE_IDENTIFIER = com.colinreed.DailyHabits;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -392,17 +392,17 @@
 		AEA126275C449FD93D454D38 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = DailyTrackerWidget/DailyTrackerWidget.entitlements;
+				CODE_SIGN_ENTITLEMENTS = DailyHabitsWidget/DailyHabitsWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S28599VGAR;
-				INFOPLIST_FILE = DailyTrackerWidget/Info.plist;
+				INFOPLIST_FILE = DailyHabitsWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.colinreed.DailyTracker.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.colinreed.DailyHabits.widget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -470,19 +470,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = DailyTracker/DailyTracker.entitlements;
+				CODE_SIGN_ENTITLEMENTS = DailyHabits/DailyHabits.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S28599VGAR;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = DailyTracker/Info.plist;
+				INFOPLIST_FILE = DailyHabits/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.colinreed.DailyTracker;
+				PRODUCT_BUNDLE_IDENTIFIER = com.colinreed.DailyHabits;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -555,7 +555,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		7120B12E56E52F9CD86F6B5F /* Build configuration list for PBXNativeTarget "DailyTrackerWidget" */ = {
+		7120B12E56E52F9CD86F6B5F /* Build configuration list for PBXNativeTarget "DailyHabitsWidget" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0AF007B4299E5B0BA7F3D6D4 /* Debug */,
@@ -564,7 +564,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		88A282B57F02C15AD79B6749 /* Build configuration list for PBXNativeTarget "DailyTracker" */ = {
+		88A282B57F02C15AD79B6749 /* Build configuration list for PBXNativeTarget "DailyHabits" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CE14A4B2EC76D11EAC7B89A7 /* Debug */,
@@ -573,7 +573,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		A9F43C4C2F90FFEC5155C277 /* Build configuration list for PBXProject "DailyTracker" */ = {
+		A9F43C4C2F90FFEC5155C277 /* Build configuration list for PBXProject "DailyHabits" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E49AE67410BBDFE60973A60A /* Debug */,

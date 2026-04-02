@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1430"
-   wasCreatedForAppExtension = "YES"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7B0DBE9DE0524BAA49BB36AE"
-               BuildableName = "DailyTrackerWidget.appex"
-               BlueprintName = "DailyTrackerWidget"
-               ReferencedContainer = "container:DailyTracker.xcodeproj">
+               BlueprintIdentifier = "A9F3A97865027AB61793447D"
+               BuildableName = "DailyHabits.app"
+               BlueprintName = "DailyHabits"
+               ReferencedContainer = "container:DailyHabits.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,45 +32,39 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7B0DBE9DE0524BAA49BB36AE"
-            BuildableName = "DailyTrackerWidget.appex"
-            BlueprintName = "DailyTrackerWidget"
-            ReferencedContainer = "container:DailyTracker.xcodeproj">
+            BlueprintIdentifier = "A9F3A97865027AB61793447D"
+            BuildableName = "DailyHabits.app"
+            BlueprintName = "DailyHabits"
+            ReferencedContainer = "container:DailyHabits.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
       </Testables>
+      <CommandLineArguments>
+      </CommandLineArguments>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = ""
-      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES"
-      launchAutomaticallySubstyle = "2">
+      allowLocationSimulation = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7B0DBE9DE0524BAA49BB36AE"
-            BuildableName = "DailyTrackerWidget.appex"
-            BlueprintName = "DailyTrackerWidget"
-            ReferencedContainer = "container:DailyTracker.xcodeproj">
+            BlueprintIdentifier = "A9F3A97865027AB61793447D"
+            BuildableName = "DailyHabits.app"
+            BlueprintName = "DailyHabits"
+            ReferencedContainer = "container:DailyHabits.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
       </CommandLineArguments>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "_XCWidgetKind"
-            value = "TaskCountWidget"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -83,10 +76,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7B0DBE9DE0524BAA49BB36AE"
-            BuildableName = "DailyTrackerWidget.appex"
-            BlueprintName = "DailyTrackerWidget"
-            ReferencedContainer = "container:DailyTracker.xcodeproj">
+            BlueprintIdentifier = "A9F3A97865027AB61793447D"
+            BuildableName = "DailyHabits.app"
+            BlueprintName = "DailyHabits"
+            ReferencedContainer = "container:DailyHabits.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

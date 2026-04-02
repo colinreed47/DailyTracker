@@ -17,9 +17,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7B0DBE9DE0524BAA49BB36AE"
-               BuildableName = "DailyTrackerWidget.appex"
-               BlueprintName = "DailyTrackerWidget"
-               ReferencedContainer = "container:DailyTracker.xcodeproj">
+               BuildableName = "DailyHabitsWidget.appex"
+               BlueprintName = "DailyHabitsWidget"
+               ReferencedContainer = "container:DailyHabits.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -34,9 +34,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B0DBE9DE0524BAA49BB36AE"
-            BuildableName = "DailyTrackerWidget.appex"
-            BlueprintName = "DailyTrackerWidget"
-            ReferencedContainer = "container:DailyTracker.xcodeproj">
+            BuildableName = "DailyHabitsWidget.appex"
+            BlueprintName = "DailyHabitsWidget"
+            ReferencedContainer = "container:DailyHabits.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -58,9 +58,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B0DBE9DE0524BAA49BB36AE"
-            BuildableName = "DailyTrackerWidget.appex"
-            BlueprintName = "DailyTrackerWidget"
-            ReferencedContainer = "container:DailyTracker.xcodeproj">
+            BuildableName = "DailyHabitsWidget.appex"
+            BlueprintName = "DailyHabitsWidget"
+            ReferencedContainer = "container:DailyHabits.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -68,7 +68,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "_XCWidgetKind"
-            value = "TaskListWidget"
+            value = "TaskCountWidget"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
@@ -84,9 +84,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B0DBE9DE0524BAA49BB36AE"
-            BuildableName = "DailyTrackerWidget.appex"
-            BlueprintName = "DailyTrackerWidget"
-            ReferencedContainer = "container:DailyTracker.xcodeproj">
+            BuildableName = "DailyHabitsWidget.appex"
+            BlueprintName = "DailyHabitsWidget"
+            ReferencedContainer = "container:DailyHabits.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

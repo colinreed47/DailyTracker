@@ -2,7 +2,7 @@ import WidgetKit
 import SwiftUI
 
 @main
-struct DailyTrackerWidgetBundle: WidgetBundle {
+struct DailyHabitsWidgetBundle: WidgetBundle {
     var body: some Widget {
         TaskListWidget()
         TaskCountWidget()

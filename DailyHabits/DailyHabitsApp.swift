@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct DailyTrackerApp: App {
+struct DailyHabitsApp: App {
     let sharedModelContainer: ModelContainer = SharedDataStore.makeContainer()
 
     var body: some Scene {
