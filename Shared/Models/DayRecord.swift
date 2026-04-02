@@ -10,6 +10,7 @@ final class DayRecord {
     var allTaskTitles: [String]
     /// Titles of tasks that were completed
     var completedTaskTitles: [String]
+    var updatedAt: Date
 
     var totalTaskCount: Int { allTaskTitles.count }
     var completedCount: Int { completedTaskTitles.count }
@@ -19,9 +20,19 @@ final class DayRecord {
     }
 
     init(dateString: String, allTaskTitles: [String], completedTaskTitles: [String]) {
-        self.id = UUID()
-        self.dateString = dateString
-        self.allTaskTitles = allTaskTitles
-        self.completedTaskTitles = completedTaskTitles
+        self.id                   = UUID()
+        self.dateString           = dateString
+        self.allTaskTitles        = allTaskTitles
+        self.completedTaskTitles  = completedTaskTitles
+        self.updatedAt            = Date()
+    }
+
+    /// Initialise from a remote Supabase payload.
+    init(from payload: DayRecordPayload) {
+        self.id                   = payload.id
+        self.dateString           = payload.dateString
+        self.allTaskTitles        = payload.allTaskTitles
+        self.completedTaskTitles  = payload.completedTaskTitles
+        self.updatedAt            = payload.updatedAt
     }
 }

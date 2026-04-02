@@ -26,23 +26,29 @@ struct ToggleTaskIntent: AppIntent {
 
         guard let task = tasks.first(where: { $0.id == id }) else { return .result() }
         task.isCompleted.toggle()
+        task.updatedAt = Date()
+        SharedDataStore.markPending(id: task.id)
         try? context.save()
 
         // Keep today's DayRecord in sync
         let today = DateFormatter.dayFormatter.string(from: Date())
-        let allTitles = tasks.map(\.title)
+        let allTitles       = tasks.map(\.title)
         let completedTitles = tasks.filter(\.isCompleted).map(\.title)
 
         let records = (try? context.fetch(FetchDescriptor<DayRecord>())) ?? []
         if let existing = records.first(where: { $0.dateString == today }) {
-            existing.allTaskTitles = allTitles
+            existing.allTaskTitles       = allTitles
             existing.completedTaskTitles = completedTitles
+            existing.updatedAt           = Date()
+            SharedDataStore.markPending(id: existing.id)
         } else {
-            context.insert(DayRecord(
+            let record = DayRecord(
                 dateString: today,
                 allTaskTitles: allTitles,
                 completedTaskTitles: completedTitles
-            ))
+            )
+            context.insert(record)
+            SharedDataStore.markPending(id: record.id)
         }
         try? context.save()
 
