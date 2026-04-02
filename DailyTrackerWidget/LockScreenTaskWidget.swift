@@ -13,8 +13,6 @@ struct LockScreenTaskWidgetView: View {
             circularView
         case .accessoryRectangular:
             rectangularView
-        default:
-            circularView
         }
     }
 
@@ -23,18 +21,18 @@ struct LockScreenTaskWidgetView: View {
             AccessoryWidgetBackground()
             if entry.total == 0 {
                 Image(systemName: "checkmark.circle")
-                    .font(.system(size: 24, weight: .light))
+                    .font(.title2.weight(.light))
             } else if entry.remaining == 0 {
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 24))
-                    .foregroundStyle(.green)
+                    .font(.title2)
             } else {
                 VStack(spacing: 0) {
                     Text("\(entry.remaining)")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(.title.bold())
+                        .fontDesign(.rounded)
                         .minimumScaleFactor(0.6)
                     Text(entry.remaining == 1 ? "task" : "tasks")
-                        .font(.system(size: 9))
+                        .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -46,18 +44,18 @@ struct LockScreenTaskWidgetView: View {
         HStack(spacing: 6) {
             if entry.total == 0 {
                 Image(systemName: "checkmark.circle")
-                    .font(.system(size: 18, weight: .light))
+                    .font(.title3.weight(.light))
                 Text("No tasks")
                     .font(.headline)
             } else if entry.remaining == 0 {
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 18))
-                    .foregroundStyle(.green)
+                    .font(.title3)
                 Text("All done!")
                     .font(.headline)
             } else {
                 Text("\(entry.remaining)")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(.title.bold())
+                    .fontDesign(.rounded)
                     .minimumScaleFactor(0.6)
                 Text(entry.remaining == 1 ? "task\nleft" : "tasks\nleft")
                     .font(.caption)
@@ -78,7 +76,7 @@ struct LockScreenTaskWidget: Widget {
         StaticConfiguration(kind: kind, provider: TaskCountProvider()) { entry in
             LockScreenTaskWidgetView(entry: entry)
         }
-        .configurationDisplayName("Tasks Remaining")
+        .configurationDisplayName("Tasks (Lock Screen)")
         .description("See how many tasks you have left today.")
         .supportedFamilies([.accessoryCircular, .accessoryRectangular])
     }
