@@ -19,35 +19,46 @@ struct DayCell: View {
         dateString <= Date().dayString
     }
 
-    private var completionColor: Color? {
-        guard let record, record.totalTaskCount > 0 else { return nil }
-        let ratio = record.completionRatio
-        if ratio == 1.0 { return .green }
-        if ratio > 0 { return .yellow }
-        if isPastOrToday { return .red }
-        return nil
+    private enum DayCompletion {
+        case complete, partial, missed, none
     }
 
-    private var circleColor: Color? {
-        if isToday { return completionColor ?? .accentColor }
-        return completionColor
+    private var dayCompletion: DayCompletion {
+        guard let record, record.totalTaskCount > 0 else { return .none }
+        if record.completedCount == record.totalTaskCount { return .complete }
+        if record.completedCount + record.partialCount > 0 { return .partial }
+        if isPastOrToday { return .missed }
+        return .none
     }
 
     var body: some View {
         Button(action: onTap) {
             ZStack {
-                // Transparent base guarantees the cell fills its column
                 Color.clear
 
-                if let color = circleColor {
+                switch dayCompletion {
+                case .complete:
                     Circle()
-                        .fill(isToday ? color : color.opacity(0.28))
+                        .fill(Color.green.opacity(isToday ? 1.0 : 0.28))
                         .padding(2)
+                case .partial:
+                    partialCircle
+                        .padding(2)
+                case .missed:
+                    Circle()
+                        .fill(Color.red.opacity(isToday ? 1.0 : 0.28))
+                        .padding(2)
+                case .none:
+                    if isToday {
+                        Circle()
+                            .fill(Color.accentColor)
+                            .padding(2)
+                    }
                 }
 
                 Text(dayNumber)
                     .font(.system(size: 15, weight: isToday ? .semibold : .regular))
-                    .foregroundStyle(isToday ? .white : .primary)
+                    .foregroundStyle(textColor)
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
             }
@@ -56,5 +67,19 @@ struct DayCell: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+
+    // Left half orange, right half gray — indicates partial completion
+    private var partialCircle: some View {
+        let opacity = isToday ? 1.0 : 0.35
+        return HStack(spacing: 0) {
+            Color.orange.opacity(opacity)
+            Color.gray.opacity(opacity * 0.4)
+        }
+        .clipShape(Circle())
+    }
+
+    private var textColor: Color {
+        isToday ? .white : .primary
     }
 }

@@ -25,23 +25,33 @@ struct ToggleTaskIntent: AppIntent {
         )) ?? []
 
         guard let task = tasks.first(where: { $0.id == id }) else { return .result() }
-        task.isCompleted.toggle()
+        if !task.isPartial && !task.isCompleted {
+            task.isPartial = true
+        } else if task.isPartial {
+            task.isPartial = false
+            task.isCompleted = true
+        } else {
+            task.isCompleted = false
+        }
         try? context.save()
 
         // Keep today's DayRecord in sync
         let today = DateFormatter.dayFormatter.string(from: Date())
         let allTitles = tasks.map(\.title)
         let completedTitles = tasks.filter(\.isCompleted).map(\.title)
+        let partialTitles = tasks.filter(\.isPartial).map(\.title)
 
         let records = (try? context.fetch(FetchDescriptor<DayRecord>())) ?? []
         if let existing = records.first(where: { $0.dateString == today }) {
             existing.allTaskTitles = allTitles
             existing.completedTaskTitles = completedTitles
+            existing.partiallyCompletedTaskTitles = partialTitles
         } else {
             context.insert(DayRecord(
                 dateString: today,
                 allTaskTitles: allTitles,
-                completedTaskTitles: completedTitles
+                completedTaskTitles: completedTitles,
+                partiallyCompletedTaskTitles: partialTitles
             ))
         }
         try? context.save()

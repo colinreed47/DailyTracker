@@ -35,6 +35,11 @@ schemes:
       environmentVariables:
         _XCWidgetKind: TaskCountWidget
 
+packages:
+  Supabase:
+    url: https://github.com/supabase/supabase-swift
+    from: 2.0.0
+
 targets:
   DailyTracker:
     type: application
@@ -71,6 +76,8 @@ targets:
         Release:
           SWIFT_OPTIMIZATION_LEVEL: "-O"
     dependencies:
+      - package: Supabase
+        product: Supabase
       - target: DailyTrackerWidget
 
   DailyTrackerWidget:
