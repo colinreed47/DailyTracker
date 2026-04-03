@@ -42,11 +42,16 @@ struct DayCell: View {
                         .fill(Color.green.opacity(isToday ? 1.0 : 0.28))
                         .padding(2)
                 case .partial:
-                    partialCircle
-                        .padding(2)
+                    HStack(spacing: 0) {
+                        Color.orange.opacity(isToday ? 1.0 : 0.35)
+                        Color.gray.opacity(isToday ? 0.4 : 0.14)
+                    }
+                    .clipShape(Circle())
+                    .padding(2)
                 case .missed:
+                    // Stroke-only ring so colorblind users can distinguish from filled complete
                     Circle()
-                        .fill(Color.red.opacity(isToday ? 1.0 : 0.28))
+                        .stroke(Color.red.opacity(isToday ? 1.0 : 0.5), lineWidth: 1.5)
                         .padding(2)
                 case .none:
                     if isToday {
@@ -67,19 +72,25 @@ struct DayCell: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-    }
-
-    // Left half orange, right half gray — indicates partial completion
-    private var partialCircle: some View {
-        let opacity = isToday ? 1.0 : 0.35
-        return HStack(spacing: 0) {
-            Color.orange.opacity(opacity)
-            Color.gray.opacity(opacity * 0.4)
-        }
-        .clipShape(Circle())
+        .accessibilityLabel(accessibilityLabel)
     }
 
     private var textColor: Color {
-        isToday ? .white : .primary
+        // Missed uses stroke (no fill), so text stays primary regardless of today status
+        if dayCompletion == .missed { return .primary }
+        return isToday ? .white : .primary
+    }
+
+    private var accessibilityLabel: String {
+        guard
+            let date = DateFormatter.dayFormatter.date(from: dateString)
+        else { return dateString }
+        let dateLabel = date.formatted(.dateTime.month(.wide).day().year())
+        switch dayCompletion {
+        case .complete: return "\(dateLabel), all tasks complete"
+        case .partial:  return "\(dateLabel), partially complete"
+        case .missed:   return "\(dateLabel), no tasks completed"
+        case .none:     return dateLabel
+        }
     }
 }

@@ -161,11 +161,17 @@ struct FriendsView: View {
 
             ForEach(outgoing) { pending in
                 HStack {
-                    Text(pending.displayName)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(pending.displayName)
+                        Text("Request sent")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                     Spacer()
-                    Text("Pending")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    Button("Cancel", role: .destructive) {
+                        Task { await vm.cancelFriendRequest(friendshipId: pending.friendshipId) }
+                    }
+                    .controlSize(.small)
                 }
             }
         }
@@ -210,7 +216,7 @@ struct FriendsView: View {
                             }
                         }
                     }
-                    .disabled(friendCodeInput.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .disabled(friendCodeInput.trimmingCharacters(in: .whitespaces).count != 6)
                 }
             }
         }

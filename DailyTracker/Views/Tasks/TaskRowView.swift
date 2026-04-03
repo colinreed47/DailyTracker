@@ -24,6 +24,12 @@ struct TaskRowView: View {
         return .secondary
     }
 
+    private var checkboxAccessibilityLabel: String {
+        if task.isCompleted { return "Completed: \(task.title). Tap to mark incomplete." }
+        if task.isPartial { return "Partial: \(task.title). Tap to mark complete." }
+        return "Incomplete: \(task.title). Tap to mark partial."
+    }
+
     var body: some View {
         Button(action: triggerAnimation) {
             HStack(spacing: 12) {
@@ -47,6 +53,7 @@ struct TaskRowView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(checkboxAccessibilityLabel)
     }
 
     // MARK: - Checkbox + Particles
@@ -84,23 +91,22 @@ struct TaskRowView: View {
     private func triggerAnimation() {
         onToggle()
 
-        // Scale pop
         checkBounce = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-            checkBounce = false
-        }
-
-        // Particle burst
         particlesVisible = true
         withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
             particleProgress = 1
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
+
+        Task {
+            try? await Task.sleep(for: .milliseconds(350))
+            checkBounce = false
+
+            try? await Task.sleep(for: .milliseconds(100))
             withAnimation(.easeIn(duration: 0.2)) {
                 particleProgress = 0
             }
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.65) {
+
+            try? await Task.sleep(for: .milliseconds(200))
             particlesVisible = false
         }
     }
