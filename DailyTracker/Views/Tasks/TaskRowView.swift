@@ -12,6 +12,18 @@ struct TaskRowView: View {
     private let particleColors: [Color] = [.green, .teal, .mint]
     private let particleCount = 8
 
+    private var checkboxIcon: String {
+        if task.isCompleted { return "checkmark.circle.fill" }
+        if task.isPartial { return "circle.lefthalf.filled" }
+        return "circle"
+    }
+
+    private var checkboxColor: Color {
+        if task.isCompleted { return .green }
+        if task.isPartial { return .orange }
+        return .secondary
+    }
+
     var body: some View {
         Button(action: triggerAnimation) {
             HStack(spacing: 12) {
@@ -20,11 +32,15 @@ struct TaskRowView: View {
                         UIImpactFeedbackGenerator(style: newValue ? .medium : .light)
                             .impactOccurred()
                     }
+                    .onChange(of: task.isPartial) { _, _ in
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    }
 
                 Text(task.title)
                     .foregroundStyle(task.isCompleted ? Color.secondary : Color.primary)
                     .strikethrough(task.isCompleted)
                     .animation(.default, value: task.isCompleted)
+                    .animation(.default, value: task.isPartial)
 
                 Spacer()
             }
@@ -52,12 +68,13 @@ struct TaskRowView: View {
                 }
             }
 
-            Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+            Image(systemName: checkboxIcon)
                 .font(.title3)
-                .foregroundStyle(task.isCompleted ? Color.green : Color.secondary)
+                .foregroundStyle(checkboxColor)
                 .scaleEffect(checkBounce ? 1.3 : 1.0)
                 .animation(.spring(response: 0.25, dampingFraction: 0.45), value: checkBounce)
                 .animation(.spring(duration: 0.2), value: task.isCompleted)
+                .animation(.spring(duration: 0.2), value: task.isPartial)
         }
         .frame(width: 28, height: 28)
     }

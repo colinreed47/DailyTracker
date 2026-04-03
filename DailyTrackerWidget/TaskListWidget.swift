@@ -14,14 +14,27 @@ struct TaskSnapshot: Identifiable {
     let id: UUID
     let title: String
     let isCompleted: Bool
+    let isPartial: Bool
+
+    var checkboxIcon: String {
+        if isCompleted { return "checkmark.circle.fill" }
+        if isPartial { return "circle.lefthalf.filled" }
+        return "circle"
+    }
+
+    var checkboxColor: Color {
+        if isCompleted { return .green }
+        if isPartial { return .orange }
+        return .secondary
+    }
 }
 
 struct TaskListProvider: TimelineProvider {
     func placeholder(in context: Context) -> TaskListEntry {
         TaskListEntry(date: Date(), tasks: [
-            TaskSnapshot(id: UUID(), title: "Morning workout", isCompleted: true),
-            TaskSnapshot(id: UUID(), title: "Read 30 minutes", isCompleted: false),
-            TaskSnapshot(id: UUID(), title: "Drink 8 glasses of water", isCompleted: false),
+            TaskSnapshot(id: UUID(), title: "Morning workout", isCompleted: true, isPartial: false),
+            TaskSnapshot(id: UUID(), title: "Read 30 minutes", isCompleted: false, isPartial: true),
+            TaskSnapshot(id: UUID(), title: "Drink 8 glasses of water", isCompleted: false, isPartial: false),
         ])
     }
 
@@ -46,7 +59,7 @@ struct TaskListProvider: TimelineProvider {
         let tasks = (try? context.fetch(
             FetchDescriptor<TaskItem>(sortBy: [SortDescriptor(\.orderIndex)])
         )) ?? []
-        return tasks.map { TaskSnapshot(id: $0.id, title: $0.title, isCompleted: $0.isCompleted) }
+        return tasks.map { TaskSnapshot(id: $0.id, title: $0.title, isCompleted: $0.isCompleted, isPartial: $0.isPartial) }
     }
 
     private func resetTasksIfNewDay(context: ModelContext) {
@@ -54,7 +67,10 @@ struct TaskListProvider: TimelineProvider {
         let defaults = SharedDataStore.sharedDefaults
         guard defaults.string(forKey: "lastResetDate") != today else { return }
         let tasks = (try? context.fetch(FetchDescriptor<TaskItem>())) ?? []
-        for task in tasks { task.isCompleted = false }
+        for task in tasks {
+            task.isCompleted = false
+            task.isPartial = false
+        }
         try? context.save()
         defaults.set(today, forKey: "lastResetDate")
     }
@@ -103,8 +119,8 @@ struct TaskListWidgetView: View {
                     ForEach(visible) { task in
                         Button(intent: ToggleTaskIntent(taskID: task.id)) {
                             HStack(spacing: 10) {
-                                Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(task.isCompleted ? Color.green : Color.secondary)
+                                Image(systemName: task.checkboxIcon)
+                                    .foregroundStyle(task.checkboxColor)
                                     .font(.body)
 
                                 Text(task.title)

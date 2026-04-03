@@ -1,16 +1,22 @@
 import SwiftUI
+import SwiftData
 
 struct DaySummaryView: View {
     let dateString: String
     let record: DayRecord?
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
 
     private var formattedDate: String {
         guard let date = DateFormatter.dayFormatter.date(from: dateString) else { return dateString }
         let f = DateFormatter()
         f.dateStyle = .long
         return f.string(from: date)
+    }
+
+    private var isPastOrToday: Bool {
+        dateString <= Date().dayString
     }
 
     var body: some View {
@@ -29,8 +35,13 @@ struct DaySummaryView: View {
             .navigationTitle(formattedDate)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                if isPastOrToday {
+                    ToolbarItem(placement: .topBarLeading) {
+                        EditButton()
+                    }
+                }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button("Close") { dismiss() }
                 }
             }
         }
@@ -43,8 +54,15 @@ struct DaySummaryView: View {
             Section {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("\(record.completedCount) of \(record.totalTaskCount) tasks completed")
-                            .font(.headline)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("\(record.completedCount) of \(record.totalTaskCount) completed")
+                                .font(.headline)
+                            if record.partialCount > 0 {
+                                Text("\(record.partialCount) partial")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.orange)
+                            }
+                        }
                         Spacer()
                         Text(percentLabel(record.completionRatio))
                             .font(.headline)
@@ -56,26 +74,109 @@ struct DaySummaryView: View {
                 .padding(.vertical, 4)
             }
 
-            if !record.completedTaskTitles.isEmpty {
+            if isPastOrToday {
+                Section {
+                    Text("Tap a task to cycle its completion status.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            let completedTitles = record.completedTaskTitles
+            let partialTitles = record.partiallyCompletedTaskTitles
+            let incompleteTitles = record.allTaskTitles.filter {
+                !completedTitles.contains($0) && !partialTitles.contains($0)
+            }
+
+            if !completedTitles.isEmpty {
                 Section("Completed") {
-                    ForEach(record.completedTaskTitles, id: \.self) { title in
-                        Label(title, systemImage: "checkmark.circle.fill")
-                            .foregroundStyle(Color.primary)
+                    ForEach(completedTitles, id: \.self) { title in
+                        taskRow(title: title, icon: "checkmark.circle.fill", color: .green, record: record)
+                    }
+                    .onDelete { offsets in
+                        removeFromCompleted(at: offsets, record: record)
                     }
                 }
             }
 
-            let incomplete = record.allTaskTitles.filter { !record.completedTaskTitles.contains($0) }
-            if !incomplete.isEmpty {
+            if !partialTitles.isEmpty {
+                Section("Partial") {
+                    ForEach(partialTitles, id: \.self) { title in
+                        taskRow(title: title, icon: "circle.lefthalf.filled", color: .orange, record: record)
+                    }
+                    .onDelete { offsets in
+                        removeFromPartial(at: offsets, record: record)
+                    }
+                }
+            }
+
+            if !incompleteTitles.isEmpty {
                 Section("Not Completed") {
-                    ForEach(incomplete, id: \.self) { title in
-                        Label(title, systemImage: "circle")
-                            .foregroundStyle(Color.secondary)
+                    ForEach(incompleteTitles, id: \.self) { title in
+                        taskRow(title: title, icon: "circle", color: .secondary, record: record)
+                    }
+                    .onDelete { offsets in
+                        removeFromIncomplete(offsets, titles: incompleteTitles, record: record)
                     }
                 }
             }
         }
         .listStyle(.insetGrouped)
+    }
+
+    @ViewBuilder
+    private func taskRow(title: String, icon: String, color: Color, record: DayRecord) -> some View {
+        if isPastOrToday {
+            Button {
+                cycleTaskTitle(title, in: record)
+            } label: {
+                Label(title, systemImage: icon)
+                    .foregroundStyle(Color.primary)
+            }
+            .buttonStyle(.plain)
+        } else {
+            Label(title, systemImage: icon)
+                .foregroundStyle(color == .secondary ? Color.secondary : Color.primary)
+        }
+    }
+
+    // MARK: - Mutations
+
+    private func cycleTaskTitle(_ title: String, in record: DayRecord) {
+        if record.completedTaskTitles.contains(title) {
+            record.completedTaskTitles.removeAll { $0 == title }
+        } else if record.partiallyCompletedTaskTitles.contains(title) {
+            record.partiallyCompletedTaskTitles.removeAll { $0 == title }
+            record.completedTaskTitles.append(title)
+        } else {
+            record.partiallyCompletedTaskTitles.append(title)
+        }
+        save(record)
+    }
+
+    private func removeFromCompleted(at offsets: IndexSet, record: DayRecord) {
+        let titles = offsets.map { record.completedTaskTitles[$0] }
+        record.completedTaskTitles.remove(atOffsets: offsets)
+        record.allTaskTitles.removeAll { titles.contains($0) }
+        save(record)
+    }
+
+    private func removeFromPartial(at offsets: IndexSet, record: DayRecord) {
+        let titles = offsets.map { record.partiallyCompletedTaskTitles[$0] }
+        record.partiallyCompletedTaskTitles.remove(atOffsets: offsets)
+        record.allTaskTitles.removeAll { titles.contains($0) }
+        save(record)
+    }
+
+    private func removeFromIncomplete(_ offsets: IndexSet, titles incompleteTitles: [String], record: DayRecord) {
+        let toRemove = offsets.map { incompleteTitles[$0] }
+        record.allTaskTitles.removeAll { toRemove.contains($0) }
+        save(record)
+    }
+
+    private func save(_ record: DayRecord) {
+        try? modelContext.save()
+        Task { await SupabaseManager.shared.upsertDayRecord(record) }
     }
 
     private func percentLabel(_ ratio: Double) -> String {

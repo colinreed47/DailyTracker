@@ -26,11 +26,14 @@
 		901FA824BB655E3F1B6A6619 /* DayRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E89827E259C1DAFA8A7019 /* DayRecord.swift */; };
 		98E0AC4FD85C2D4C12DF35E2 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F81409C5771A7C92E801AE /* AddTaskView.swift */; };
 		B1F9561541640D126E0282FB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D9163D5D71D4DE69D45A84D /* ContentView.swift */; };
+		C243E99815A5D055B1CAA5DF /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE08473A3F230E8D13407089 /* EditTaskView.swift */; };
 		C37CFBC13D006CAAC86E4F16 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8030EF6AEF9AF0E1158E04A6 /* CalendarView.swift */; };
 		DF7A5850644D5545E0AD5EFD /* ToggleTaskIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7444D4624C209E584F35F0E6 /* ToggleTaskIntent.swift */; };
 		EBEAF33E05EBF00DDAE57070 /* TaskListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210E27EC55D603E71D9664B5 /* TaskListWidget.swift */; };
 		ED377922826A34F72708E185 /* DateFormatter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE699B35287979F7B14ACEF /* DateFormatter+Extensions.swift */; };
+		FD917D6F0A763962C1F3BE8D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = BFA7AE5A1497F035FACDCBEF /* Supabase */; };
 		FE272E2C696E271348FD3C39 /* DayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18E62EF1DDD99BC2146C50F /* DayCell.swift */; };
+		FF283F552996CC4C3BA8F3E8 /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF5F6D0EA4B6AB772C76194 /* SupabaseManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,11 +82,24 @@
 		B960BB55CD3FF92748561C93 /* TaskCountWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCountWidget.swift; sourceTree = "<group>"; };
 		BBC5DF003510E45370A84FB2 /* DailyTrackerWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyTrackerWidgetBundle.swift; sourceTree = "<group>"; };
 		C18E62EF1DDD99BC2146C50F /* DayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCell.swift; sourceTree = "<group>"; };
+		CEF5F6D0EA4B6AB772C76194 /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
 		D6F81409C5771A7C92E801AE /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
+		DE08473A3F230E8D13407089 /* EditTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskView.swift; sourceTree = "<group>"; };
 		EFE699B35287979F7B14ACEF /* DateFormatter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extensions.swift"; sourceTree = "<group>"; };
 		F67F57AB3C6132827907B170 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		FAD8DB2C0A3B58058FB50223 /* DailyTracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DailyTracker.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F124BD31DFC825727961401C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD917D6F0A763962C1F3BE8D /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		004A912A43432EF5A184DE36 /* Extensions */ = {
@@ -112,6 +128,7 @@
 				FAD8DB2C0A3B58058FB50223 /* DailyTracker.entitlements */,
 				17EB2BA57017D9FD563B1573 /* DailyTrackerApp.swift */,
 				3322E456E0F79BE16FDA13AF /* Info.plist */,
+				CEF5F6D0EA4B6AB772C76194 /* SupabaseManager.swift */,
 				AE1F83DB664A9801AB4F2094 /* Views */,
 			);
 			path = DailyTracker;
@@ -132,6 +149,7 @@
 			children = (
 				D6F81409C5771A7C92E801AE /* AddTaskView.swift */,
 				F67F57AB3C6132827907B170 /* ConfettiView.swift */,
+				DE08473A3F230E8D13407089 /* EditTaskView.swift */,
 				5F5BA64BEA022D0C567C233A /* TaskRowView.swift */,
 				33FEAB197897467271700014 /* TasksView.swift */,
 			);
@@ -216,6 +234,7 @@
 			buildPhases = (
 				D72D68066CBB61049072E721 /* Sources */,
 				2B893B7C9423D015AA02ECBC /* Resources */,
+				F124BD31DFC825727961401C /* Frameworks */,
 				119B6FE3F6AA603F66C1B51B /* Embed Foundation Extensions */,
 			);
 			buildRules = (
@@ -225,6 +244,7 @@
 			);
 			name = DailyTracker;
 			packageProductDependencies = (
+				BFA7AE5A1497F035FACDCBEF /* Supabase */,
 			);
 			productName = DailyTracker;
 			productReference = 4B0D7FB4679E5A1BC74CA90E /* DailyTracker.app */;
@@ -242,20 +262,10 @@
 					7B0DBE9DE0524BAA49BB36AE = {
 						DevelopmentTeam = S28599VGAR;
 						ProvisioningStyle = Automatic;
-						SystemCapabilities = {
-							com.apple.ApplicationGroups.iOS = {
-								enabled = 1;
-							};
-						};
 					};
 					A9F3A97865027AB61793447D = {
 						DevelopmentTeam = S28599VGAR;
 						ProvisioningStyle = Automatic;
-						SystemCapabilities = {
-							com.apple.ApplicationGroups.iOS = {
-								enabled = 1;
-							};
-						};
 					};
 				};
 			};
@@ -268,6 +278,9 @@
 			);
 			mainGroup = E9DF80D79DF660B57EF0F010;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3DAD2324BB7E7E76642898C2 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BA48DCA08FEA54511BFC456B /* Products */;
 			projectDirPath = "";
@@ -327,7 +340,9 @@
 				FE272E2C696E271348FD3C39 /* DayCell.swift in Sources */,
 				901FA824BB655E3F1B6A6619 /* DayRecord.swift in Sources */,
 				2AFF3DF30C2C22D7CAE30685 /* DaySummaryView.swift in Sources */,
+				C243E99815A5D055B1CAA5DF /* EditTaskView.swift in Sources */,
 				347C706CCFA44A5C0209A460 /* SharedContainer.swift in Sources */,
+				FF283F552996CC4C3BA8F3E8 /* SupabaseManager.swift in Sources */,
 				4D7D8782D32C599E4E16A304 /* TaskItem.swift in Sources */,
 				5C69DADB76C69A831A20AC96 /* TaskRowView.swift in Sources */,
 				15945A06C699FE17F9E22EC1 /* TasksView.swift in Sources */,
@@ -583,6 +598,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3DAD2324BB7E7E76642898C2 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BFA7AE5A1497F035FACDCBEF /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DAD2324BB7E7E76642898C2 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4659324EA45EB8A91DD7315F /* Project object */;
 }

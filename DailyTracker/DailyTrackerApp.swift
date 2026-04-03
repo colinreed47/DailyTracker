@@ -8,6 +8,9 @@ struct DailyTrackerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .task {
+                    await SupabaseManager.shared.signInIfNeeded()
+                }
         }
         .modelContainer(sharedModelContainer)
     }

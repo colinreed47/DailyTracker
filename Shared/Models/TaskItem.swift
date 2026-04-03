@@ -6,6 +6,7 @@ final class TaskItem {
     var id: UUID
     var title: String
     var isCompleted: Bool
+    var isPartial: Bool
     var orderIndex: Int
     var createdAt: Date
 
@@ -13,6 +14,7 @@ final class TaskItem {
         self.id = UUID()
         self.title = title
         self.isCompleted = false
+        self.isPartial = false
         self.orderIndex = orderIndex
         self.createdAt = Date()
     }
