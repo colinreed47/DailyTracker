@@ -1,4 +1,7 @@
--- profiles table
+-- ============================================================
+-- Tables first (no cross-references at table creation time)
+-- ============================================================
+
 create table public.profiles (
   user_id            uuid    not null references auth.users(id) on delete cascade,
   display_name       text    not null default 'Friend',
@@ -6,6 +9,23 @@ create table public.profiles (
   is_sharing_enabled boolean not null default true,
   constraint profiles_pkey primary key (user_id)
 );
+
+create table public.friendships (
+  id           uuid        not null default gen_random_uuid(),
+  requester_id uuid        not null references auth.users(id) on delete cascade,
+  addressee_id uuid        not null references auth.users(id) on delete cascade,
+  status       text        not null default 'pending' check (status in ('pending', 'accepted')),
+  created_at   timestamptz not null default now(),
+  constraint friendships_pkey primary key (id),
+  constraint friendships_unique unique (requester_id, addressee_id)
+);
+
+create index friendships_requester_idx on public.friendships (requester_id);
+create index friendships_addressee_idx on public.friendships (addressee_id);
+
+-- ============================================================
+-- RLS (both tables exist by this point)
+-- ============================================================
 
 alter table public.profiles enable row level security;
 
@@ -36,20 +56,6 @@ create policy "Friends can read profiles"
         and f.status = 'pending'
     )
   );
-
--- friendships table
-create table public.friendships (
-  id           uuid        not null default gen_random_uuid(),
-  requester_id uuid        not null references auth.users(id) on delete cascade,
-  addressee_id uuid        not null references auth.users(id) on delete cascade,
-  status       text        not null default 'pending' check (status in ('pending', 'accepted')),
-  created_at   timestamptz not null default now(),
-  constraint friendships_pkey primary key (id),
-  constraint friendships_unique unique (requester_id, addressee_id)
-);
-
-create index friendships_requester_idx on public.friendships (requester_id);
-create index friendships_addressee_idx on public.friendships (addressee_id);
 
 alter table public.friendships enable row level security;
 
@@ -84,6 +90,10 @@ create policy "Friends can read shared day records"
     )
   );
 
+-- ============================================================
+-- View and functions
+-- ============================================================
+
 -- View that exposes only completion counts (no task titles) for friend calendars
 create or replace view public.friend_calendar_view
 with (security_invoker = true)
@@ -91,13 +101,12 @@ as
 select
   dr.user_id,
   dr.date_string,
-  cardinality(dr.all_task_titles)                    as total_count,
-  cardinality(dr.completed_task_titles)              as completed_count,
-  cardinality(dr.partially_completed_task_titles)    as partial_count
+  cardinality(dr.all_task_titles)                 as total_count,
+  cardinality(dr.completed_task_titles)           as completed_count,
+  cardinality(dr.partially_completed_task_titles) as partial_count
 from public.day_records dr;
 
 -- RPC: look up a user by friend code and create a pending friendship
--- Uses security definer so the caller can search profiles without needing RLS access to all rows
 create or replace function public.add_friend_by_code(p_friend_code text)
 returns jsonb
 language plpgsql
