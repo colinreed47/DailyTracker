@@ -2,6 +2,7 @@ import Observation
 import Foundation
 import Supabase
 
+@MainActor
 @Observable
 final class FriendsViewModel {
     var profile: UserProfile? = nil
@@ -152,6 +153,19 @@ final class FriendsViewModel {
             await fetchFriends()
         } catch {
             print("[Friends] accept error: \(error)")
+        }
+    }
+
+    func cancelFriendRequest(friendshipId: UUID) async {
+        do {
+            try await client
+                .from("friendships")
+                .delete()
+                .eq("id", value: friendshipId.uuidString)
+                .execute()
+            await fetchFriends()
+        } catch {
+            print("[Friends] cancel request error: \(error)")
         }
     }
 

@@ -6,40 +6,25 @@ struct FriendCalendarView: View {
 
     @State private var currentMonth: Date = Date()
     @State private var records: [FriendDayRecord] = []
+    @State private var isLoading = false
     @State private var selectedDay: SelectedFriendDay? = nil
-
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 7)
-    private let weekdaySymbols = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                monthNavigator
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
-                Divider()
-                weekdayHeader
-                    .padding(.horizontal)
-                    .padding(.vertical, 6)
-                Divider()
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 6) {
-                        ForEach(Array(calendarDays.enumerated()), id: \.offset) { _, dayString in
-                            if dayString.isEmpty {
-                                Color.clear
-                                    .frame(maxWidth: .infinity)
-                                    .aspectRatio(1, contentMode: .fit)
-                            } else {
-                                let rec = record(for: dayString)
-                                FriendDayCell(dateString: dayString, record: rec) {
-                                    if let r = rec {
-                                        selectedDay = SelectedFriendDay(dateString: dayString, record: r)
-                                    }
-                                }
-                            }
+            ZStack {
+                CalendarGridView(currentMonth: $currentMonth) { dayString in
+                    let rec = record(for: dayString)
+                    FriendDayCell(dateString: dayString, record: rec) {
+                        if let r = rec {
+                            selectedDay = SelectedFriendDay(dateString: dayString, record: r)
                         }
                     }
-                    .padding()
+                }
+
+                if isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(.ultraThinMaterial)
                 }
             }
             .navigationTitle(friend.displayName)
@@ -48,54 +33,11 @@ struct FriendCalendarView: View {
                 FriendDaySummary(dateString: day.dateString, record: day.record)
             }
             .task {
+                isLoading = true
                 records = await vm.fetchFriendCalendar(userId: friend.userId)
+                isLoading = false
             }
         }
-    }
-
-    private var monthNavigator: some View {
-        HStack {
-            Button {
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    currentMonth = Calendar.current.date(byAdding: .month, value: -1, to: currentMonth) ?? currentMonth
-                }
-            } label: {
-                Image(systemName: "chevron.left").fontWeight(.semibold).frame(width: 44, height: 44)
-            }
-            Spacer()
-            Text(currentMonth, format: .dateTime.month(.wide).year()).font(.title2.weight(.bold))
-            Spacer()
-            Button {
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    currentMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentMonth) ?? currentMonth
-                }
-            } label: {
-                Image(systemName: "chevron.right").fontWeight(.semibold).frame(width: 44, height: 44)
-            }
-        }
-    }
-
-    private var weekdayHeader: some View {
-        LazyVGrid(columns: columns, spacing: 6) {
-            ForEach(Array(weekdaySymbols.enumerated()), id: \.offset) { _, symbol in
-                Text(symbol).font(.caption).foregroundStyle(.secondary).frame(maxWidth: .infinity)
-            }
-        }
-    }
-
-    private var calendarDays: [String] {
-        let calendar = Calendar.current
-        guard
-            let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: currentMonth)),
-            let range = calendar.range(of: .day, in: .month, for: monthStart)
-        else { return [] }
-        let firstWeekday = calendar.component(.weekday, from: monthStart) - 1
-        var days: [String] = Array(repeating: "", count: firstWeekday)
-        for day in range {
-            guard let date = calendar.date(byAdding: .day, value: day - 1, to: monthStart) else { continue }
-            days.append(DateFormatter.dayFormatter.string(from: date))
-        }
-        return days
     }
 
     private func record(for dateString: String) -> FriendDayRecord? {
@@ -153,7 +95,7 @@ struct FriendDayCell: View {
                     .padding(2)
                 case .missed:
                     Circle()
-                        .fill(Color.red.opacity(isToday ? 1.0 : 0.28))
+                        .stroke(Color.red.opacity(isToday ? 1.0 : 0.5), lineWidth: 1.5)
                         .padding(2)
                 case .none:
                     if isToday {
@@ -162,7 +104,7 @@ struct FriendDayCell: View {
                 }
                 Text(dayNumber)
                     .font(.system(size: 15, weight: isToday ? .semibold : .regular))
-                    .foregroundStyle(isToday ? .white : .primary)
+                    .foregroundStyle(dayCompletion == .missed ? .primary : (isToday ? .white : .primary))
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
             }
@@ -171,6 +113,18 @@ struct FriendDayCell: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(accessibilityLabel)
+    }
+
+    private var accessibilityLabel: String {
+        guard let date = DateFormatter.dayFormatter.date(from: dateString) else { return dateString }
+        let dateLabel = date.formatted(.dateTime.month(.wide).day().year())
+        switch dayCompletion {
+        case .complete: return "\(dateLabel), all tasks complete"
+        case .partial:  return "\(dateLabel), partially complete"
+        case .missed:   return "\(dateLabel), no tasks completed"
+        case .none:     return dateLabel
+        }
     }
 }
 
@@ -193,11 +147,20 @@ struct FriendDaySummary: View {
         return .red
     }
 
+    private var statusIcon: String {
+        if record.completionRatio == 1.0 { return "checkmark.circle.fill" }
+        if record.completionRatio > 0 { return "circle.lefthalf.filled" }
+        return "xmark.circle.fill"
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
                 Spacer()
                 VStack(spacing: 8) {
+                    Image(systemName: statusIcon)
+                        .font(.system(size: 40))
+                        .foregroundStyle(statusColor)
                     Text("\(Int(record.completionRatio * 100))%")
                         .font(.system(size: 72, weight: .bold, design: .rounded))
                         .foregroundStyle(statusColor)
@@ -223,6 +186,6 @@ struct FriendDaySummary: View {
                 }
             }
         }
-        .presentationDetents([.height(280)])
+        .presentationDetents([.height(320)])
     }
 }

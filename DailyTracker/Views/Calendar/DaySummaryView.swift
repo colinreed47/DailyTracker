@@ -64,7 +64,7 @@ struct DaySummaryView: View {
                             }
                         }
                         Spacer()
-                        Text(percentLabel(record.completionRatio))
+                        Label(percentLabel(record.completionRatio), systemImage: statusIcon(record.completionRatio))
                             .font(.headline)
                             .foregroundStyle(statusColor(record.completionRatio))
                     }
@@ -187,5 +187,11 @@ struct DaySummaryView: View {
         if ratio == 1.0 { return .green }
         if ratio > 0 { return .yellow }
         return .red
+    }
+
+    private func statusIcon(_ ratio: Double) -> String {
+        if ratio == 1.0 { return "checkmark.circle.fill" }
+        if ratio > 0 { return "circle.lefthalf.filled" }
+        return "xmark.circle.fill"
     }
 }

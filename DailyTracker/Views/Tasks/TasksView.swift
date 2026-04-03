@@ -79,13 +79,14 @@ struct TasksView: View {
                         EditButton()
                     }
                 }
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showingFriends = true
                     } label: {
                         Image(systemName: "person.circle.fill")
                             .font(.title3)
                     }
+                    .accessibilityLabel("Friends")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -93,6 +94,7 @@ struct TasksView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
+                    .accessibilityLabel("Add task")
                 }
             }
             .sheet(isPresented: $showingFriends) {
