@@ -10,7 +10,6 @@ struct TasksView: View {
 
     @State private var showingAddTask = false
     @State private var showCelebration = false
-    @State private var taskToEdit: TaskItem? = nil
     @State private var showingFriends = false
 
     private var todayString: String { Date().dayString }
@@ -44,27 +43,11 @@ struct TasksView: View {
                 } else {
                     List {
                         ForEach(tasks) { task in
-                            TaskRowView(task: task) {
-                                toggleTask(task)
-                            }
-                            .swipeActions(edge: .leading) {
-                                Button {
-                                    taskToEdit = task
-                                } label: {
-                                    Label("Edit", systemImage: "pencil")
-                                }
-                                .tint(.blue)
-                            }
-                            .contextMenu {
-                                Button("Edit", systemImage: "pencil") {
-                                    taskToEdit = task
-                                }
-                                Button("Delete", systemImage: "trash", role: .destructive) {
-                                    if let index = tasks.firstIndex(where: { $0.id == task.id }) {
-                                        deleteTasks(at: IndexSet([index]))
-                                    }
-                                }
-                            }
+                            TaskRowView(
+                                task: task,
+                                onToggle: { toggleTask(task) },
+                                onEdit: { renameTask(task, to: $0) }
+                            )
                         }
                         .onDelete(perform: deleteTasks)
                     }
@@ -103,11 +86,6 @@ struct TasksView: View {
             .sheet(isPresented: $showingAddTask) {
                 AddTaskView { title in
                     addTask(title: title)
-                }
-            }
-            .sheet(item: $taskToEdit) { task in
-                EditTaskView(currentTitle: task.title) { newTitle in
-                    renameTask(task, to: newTitle)
                 }
             }
             .onAppear {

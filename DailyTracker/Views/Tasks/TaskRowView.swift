@@ -4,10 +4,14 @@ import UIKit
 struct TaskRowView: View {
     let task: TaskItem
     let onToggle: () -> Void
+    let onEdit: (String) -> Void
 
     @State private var checkBounce = false
     @State private var particlesVisible = false
     @State private var particleProgress: CGFloat = 0
+    @State private var isEditing = false
+    @State private var editingText = ""
+    @FocusState private var isTextFieldFocused: Bool
 
     private let particleColors: [Color] = [.green, .teal, .mint]
     private let particleCount = 8
@@ -31,8 +35,8 @@ struct TaskRowView: View {
     }
 
     var body: some View {
-        Button(action: triggerAnimation) {
-            HStack(spacing: 12) {
+        HStack(spacing: 12) {
+            Button(action: triggerAnimation) {
                 checkboxView
                     .onChange(of: task.isCompleted) { _, newValue in
                         UIImpactFeedbackGenerator(style: newValue ? .medium : .light)
@@ -41,19 +45,49 @@ struct TaskRowView: View {
                     .onChange(of: task.isPartial) { _, _ in
                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     }
+            }
+            .buttonStyle(.plain)
 
+            if isEditing {
+                TextField("Task name", text: $editingText)
+                    .focused($isTextFieldFocused)
+                    .submitLabel(.done)
+                    .onSubmit { commitEdit() }
+                    .onChange(of: isTextFieldFocused) { _, focused in
+                        if !focused { commitEdit() }
+                    }
+            } else {
                 Text(task.title)
                     .foregroundStyle(task.isCompleted ? Color.secondary : Color.primary)
                     .strikethrough(task.isCompleted)
                     .animation(.default, value: task.isCompleted)
                     .animation(.default, value: task.isPartial)
-
-                Spacer()
+                    .onTapGesture { startEditing() }
             }
-            .contentShape(Rectangle())
+
+            Spacer()
         }
-        .buttonStyle(.plain)
+        .contentShape(Rectangle())
         .accessibilityLabel(checkboxAccessibilityLabel)
+    }
+
+    // MARK: - Inline Editing
+
+    private func startEditing() {
+        editingText = task.title
+        isEditing = true
+        isTextFieldFocused = true
+    }
+
+    private func commitEdit() {
+        guard isEditing else { return }
+        isEditing = false
+        let trimmed = editingText.trimmingCharacters(in: .whitespaces)
+        if !trimmed.isEmpty && trimmed != task.title {
+            onEdit(trimmed)
+        } else {
+            editingText = task.title
+        }
     }
 
     // MARK: - Checkbox + Particles
