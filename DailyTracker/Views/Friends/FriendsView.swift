@@ -22,6 +22,8 @@ struct FriendsView: View {
                 }
 
                 friendsSection
+
+                aboutSection
             }
             .navigationTitle("Friends")
             .toolbar {
@@ -173,6 +175,21 @@ struct FriendsView: View {
                     }
                     .controlSize(.small)
                 }
+            }
+        }
+    }
+
+    // MARK: - About Section
+
+    private var aboutSection: some View {
+        Section("About") {
+            HStack {
+                Text("Version")
+                Spacer()
+                let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
+                let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—"
+                Text("\(version) (\(build))")
+                    .foregroundStyle(.secondary)
             }
         }
     }
