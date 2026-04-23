@@ -63,15 +63,15 @@ final class SyncEngine {
                 SharedDataStore.clearPending(ids: recordPayloads.map(\.id))
             }
 
-            // Delete remotely
-            for idString in pendingDeletes {
+            // Delete remotely — one request for the whole set
+            if !pendingDeletes.isEmpty {
                 try await SupabaseManager.client
                     .from("task_items")
                     .delete()
-                    .eq("id", value: idString)
+                    .in("id", values: Array(pendingDeletes))
                     .execute()
+                SharedDataStore.clearPendingDeletes(ids: pendingDeletes.compactMap { UUID(uuidString: $0) })
             }
-            SharedDataStore.clearPendingDeletes(ids: pendingDeletes.compactMap { UUID(uuidString: $0) })
         } catch {
             // Leave items in the pending sets — they will retry on next foreground.
         }

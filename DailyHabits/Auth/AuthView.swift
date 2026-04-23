@@ -34,7 +34,12 @@ struct AuthView: View {
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
                 }
 
-                if let error = viewModel.errorMessage {
+                if viewModel.needsEmailConfirmation {
+                    Label("Check your email to confirm your account.", systemImage: "envelope.badge")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                } else if let error = viewModel.errorMessage {
                     Text(error)
                         .font(.caption)
                         .foregroundStyle(.red)

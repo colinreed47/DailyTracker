@@ -5,6 +5,7 @@ import WidgetKit
 struct TasksView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(AuthViewModel.self) private var authViewModel
     @Query(sort: \TaskItem.orderIndex) private var tasks: [TaskItem]
     @Query private var dayRecords: [DayRecord]
 
@@ -64,6 +65,17 @@ struct TasksView: View {
                         showingAddTask = true
                     } label: {
                         Image(systemName: "plus")
+                    }
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        Button(role: .destructive) {
+                            Task { await authViewModel.signOut() }
+                        } label: {
+                            Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+                        }
+                    } label: {
+                        Image(systemName: "person.circle")
                     }
                 }
             }
