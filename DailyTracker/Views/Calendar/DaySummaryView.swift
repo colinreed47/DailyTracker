@@ -7,6 +7,10 @@ struct DaySummaryView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @Query(sort: \TaskItem.orderIndex) private var taskItems: [TaskItem]
+    @State private var createdRecord: DayRecord? = nil
+
+    private var activeRecord: DayRecord? { record ?? createdRecord }
 
     private var formattedDate: String {
         guard let date = DateFormatter.dayFormatter.date(from: dateString) else { return dateString }
@@ -22,8 +26,10 @@ struct DaySummaryView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if let record, record.totalTaskCount > 0 {
-                    summaryList(record: record)
+                if let active = activeRecord, active.totalTaskCount > 0 {
+                    summaryList(record: active)
+                } else if isPastOrToday && !taskItems.isEmpty {
+                    emptyEditableDay()
                 } else {
                     ContentUnavailableView(
                         "No Data",
@@ -35,7 +41,7 @@ struct DaySummaryView: View {
             .navigationTitle(formattedDate)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if isPastOrToday {
+                if isPastOrToday, activeRecord != nil {
                     ToolbarItem(placement: .topBarLeading) {
                         EditButton()
                     }
@@ -138,6 +144,47 @@ struct DaySummaryView: View {
             Label(title, systemImage: icon)
                 .foregroundStyle(color == .secondary ? Color.secondary : Color.primary)
         }
+    }
+
+    @ViewBuilder
+    private func emptyEditableDay() -> some View {
+        List {
+            Section {
+                Text("Tap a task to record its completion for this day.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Section("Not Completed") {
+                ForEach(taskItems) { task in
+                    Button {
+                        let newRecord = makeRecord()
+                        cycleTaskTitle(task.title, in: newRecord)
+                    } label: {
+                        Label(task.title, systemImage: "circle")
+                            .foregroundStyle(Color.primary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+    }
+
+    private func makeRecord() -> DayRecord {
+        if let existing = try? modelContext.fetch(
+            FetchDescriptor<DayRecord>(predicate: #Predicate { $0.dateString == dateString })
+        ).first {
+            createdRecord = existing
+            return existing
+        }
+        let newRecord = DayRecord(
+            dateString: dateString,
+            allTaskTitles: taskItems.map { $0.title },
+            completedTaskTitles: []
+        )
+        modelContext.insert(newRecord)
+        createdRecord = newRecord
+        return newRecord
     }
 
     // MARK: - Mutations
