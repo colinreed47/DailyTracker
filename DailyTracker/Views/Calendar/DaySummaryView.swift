@@ -41,7 +41,7 @@ struct DaySummaryView: View {
             .navigationTitle(formattedDate)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if isPastOrToday {
+                if isPastOrToday, activeRecord != nil {
                     ToolbarItem(placement: .topBarLeading) {
                         EditButton()
                     }
@@ -150,7 +150,7 @@ struct DaySummaryView: View {
     private func emptyEditableDay() -> some View {
         List {
             Section {
-                Text("Tap a task to cycle its completion status.")
+                Text("Tap a task to record its completion for this day.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
