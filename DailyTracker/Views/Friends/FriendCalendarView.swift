@@ -77,6 +77,19 @@ struct FriendDayCell: View {
         return .none
     }
 
+    private var progressRatio: Double {
+        guard let record, record.totalCount > 0 else { return 0 }
+        return Double(record.completedCount * 2 + record.partialCount) / Double(record.totalCount * 2)
+    }
+
+    private var progressColor: Color {
+        switch progressRatio {
+        case ..<0.4:  return .red
+        case 0.4..<0.75: return .orange
+        default:      return .green
+        }
+    }
+
     var body: some View {
         Button(action: onTap) {
             ZStack {
@@ -84,18 +97,20 @@ struct FriendDayCell: View {
                 switch dayCompletion {
                 case .complete:
                     Circle()
-                        .fill(Color.green.opacity(isToday ? 1.0 : 0.28))
+                        .fill(Color.green.opacity(0.28))
                         .padding(2)
                 case .partial:
-                    HStack(spacing: 0) {
-                        Color.orange.opacity(isToday ? 1.0 : 0.35)
-                        Color.gray.opacity(isToday ? 0.4 : 0.14)
-                    }
-                    .clipShape(Circle())
-                    .padding(2)
+                    Circle()
+                        .fill(Color.gray.opacity(0.12))
+                        .padding(2)
+                    Circle()
+                        .trim(from: 0, to: progressRatio)
+                        .stroke(progressColor.opacity(0.7), style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                        .rotationEffect(.degrees(-90))
+                        .padding(4)
                 case .missed:
                     Circle()
-                        .stroke(Color.red.opacity(isToday ? 1.0 : 0.5), lineWidth: 1.5)
+                        .stroke(Color.red.opacity(0.5), lineWidth: 1.5)
                         .padding(2)
                 case .none:
                     if isToday {
@@ -104,7 +119,7 @@ struct FriendDayCell: View {
                 }
                 Text(dayNumber)
                     .font(.system(size: 15, weight: isToday ? .semibold : .regular))
-                    .foregroundStyle(dayCompletion == .missed ? .primary : (isToday ? .white : .primary))
+                    .foregroundStyle(textColor)
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
             }
@@ -116,12 +131,20 @@ struct FriendDayCell: View {
         .accessibilityLabel(accessibilityLabel)
     }
 
+    private var textColor: Color {
+        switch dayCompletion {
+        case .complete: return isToday ? .white : .primary
+        case .partial, .missed: return .primary
+        case .none: return isToday ? .white : .primary
+        }
+    }
+
     private var accessibilityLabel: String {
         guard let date = DateFormatter.dayFormatter.date(from: dateString) else { return dateString }
         let dateLabel = date.formatted(.dateTime.month(.wide).day().year())
         switch dayCompletion {
         case .complete: return "\(dateLabel), all tasks complete"
-        case .partial:  return "\(dateLabel), partially complete"
+        case .partial:  return "\(dateLabel), \(Int(progressRatio * 100))% complete"
         case .missed:   return "\(dateLabel), no tasks completed"
         case .none:     return dateLabel
         }

@@ -6,7 +6,7 @@ struct DaySummaryView: View {
     let record: DayRecord?
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    @State private var isEditing = false
 
     private var formattedDate: String {
         guard let date = DateFormatter.dayFormatter.date(from: dateString) else { return dateString }
@@ -23,7 +23,7 @@ struct DaySummaryView: View {
         NavigationStack {
             Group {
                 if let record, record.totalTaskCount > 0 {
-                    summaryList(record: record)
+                    SummaryListView(record: record, isPastOrToday: isPastOrToday, isEditing: isEditing)
                 } else {
                     ContentUnavailableView(
                         "No Data",
@@ -37,7 +37,9 @@ struct DaySummaryView: View {
             .toolbar {
                 if isPastOrToday {
                     ToolbarItem(placement: .topBarLeading) {
-                        EditButton()
+                        Button(isEditing ? "Done" : "Edit") {
+                            isEditing.toggle()
+                        }
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
@@ -47,9 +49,18 @@ struct DaySummaryView: View {
         }
         .presentationDetents([.medium, .large])
     }
+}
 
-    @ViewBuilder
-    private func summaryList(record: DayRecord) -> some View {
+private struct SummaryListView: View {
+    let record: DayRecord
+    let isPastOrToday: Bool
+    let isEditing: Bool
+
+    @Environment(\.modelContext) private var modelContext
+    @State private var taskToRename: String? = nil
+    @State private var renameText = ""
+
+    var body: some View {
         List {
             Section {
                 VStack(alignment: .leading, spacing: 8) {
@@ -74,9 +85,9 @@ struct DaySummaryView: View {
                 .padding(.vertical, 4)
             }
 
-            if isPastOrToday {
+            if isPastOrToday && isEditing {
                 Section {
-                    Text("Tap a task to cycle its completion status.")
+                    Text("Tap the status icon to cycle completion. Tap the task name to rename it.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -91,10 +102,7 @@ struct DaySummaryView: View {
             if !completedTitles.isEmpty {
                 Section("Completed") {
                     ForEach(completedTitles, id: \.self) { title in
-                        taskRow(title: title, icon: "checkmark.circle.fill", color: .green, record: record)
-                    }
-                    .onDelete { offsets in
-                        removeFromCompleted(at: offsets, record: record)
+                        taskRow(title: title, icon: "checkmark.circle.fill", color: .green)
                     }
                 }
             }
@@ -102,10 +110,7 @@ struct DaySummaryView: View {
             if !partialTitles.isEmpty {
                 Section("Partial") {
                     ForEach(partialTitles, id: \.self) { title in
-                        taskRow(title: title, icon: "circle.lefthalf.filled", color: .orange, record: record)
-                    }
-                    .onDelete { offsets in
-                        removeFromPartial(at: offsets, record: record)
+                        taskRow(title: title, icon: "circle.lefthalf.filled", color: .orange)
                     }
                 }
             }
@@ -113,27 +118,46 @@ struct DaySummaryView: View {
             if !incompleteTitles.isEmpty {
                 Section("Not Completed") {
                     ForEach(incompleteTitles, id: \.self) { title in
-                        taskRow(title: title, icon: "circle", color: .secondary, record: record)
-                    }
-                    .onDelete { offsets in
-                        removeFromIncomplete(offsets, titles: incompleteTitles, record: record)
+                        taskRow(title: title, icon: "circle", color: .secondary)
                     }
                 }
             }
         }
         .listStyle(.insetGrouped)
+        .sheet(isPresented: Binding(get: { taskToRename != nil }, set: { if !$0 { taskToRename = nil } })) {
+            if let title = taskToRename {
+                RenameTaskView(currentTitle: title) { newTitle in
+                    renameTask(from: title, to: newTitle)
+                }
+            }
+        }
     }
 
     @ViewBuilder
-    private func taskRow(title: String, icon: String, color: Color, record: DayRecord) -> some View {
-        if isPastOrToday {
-            Button {
-                cycleTaskTitle(title, in: record)
-            } label: {
-                Label(title, systemImage: icon)
-                    .foregroundStyle(Color.primary)
+    private func taskRow(title: String, icon: String, color: Color) -> some View {
+        if isPastOrToday && isEditing {
+            HStack(spacing: 12) {
+                // Status icon — tap to cycle completion
+                Button {
+                    cycleTaskTitle(title)
+                } label: {
+                    Image(systemName: icon)
+                        .font(.title3)
+                        .foregroundStyle(color == .secondary ? Color.secondary : color)
+                }
+                .buttonStyle(.plain)
+
+                // Task name — tap to rename
+                Button {
+                    renameText = title
+                    taskToRename = title
+                } label: {
+                    Text(title)
+                        .foregroundStyle(Color.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         } else {
             Label(title, systemImage: icon)
                 .foregroundStyle(color == .secondary ? Color.secondary : Color.primary)
@@ -142,39 +166,32 @@ struct DaySummaryView: View {
 
     // MARK: - Mutations
 
-    private func cycleTaskTitle(_ title: String, in record: DayRecord) {
+    private func cycleTaskTitle(_ title: String) {
         if record.completedTaskTitles.contains(title) {
+            // complete → partial
             record.completedTaskTitles.removeAll { $0 == title }
-        } else if record.partiallyCompletedTaskTitles.contains(title) {
-            record.partiallyCompletedTaskTitles.removeAll { $0 == title }
-            record.completedTaskTitles.append(title)
-        } else {
             record.partiallyCompletedTaskTitles.append(title)
+        } else if record.partiallyCompletedTaskTitles.contains(title) {
+            // partial → incomplete
+            record.partiallyCompletedTaskTitles.removeAll { $0 == title }
+        } else {
+            // incomplete → complete
+            record.completedTaskTitles.append(title)
         }
-        save(record)
+        save()
     }
 
-    private func removeFromCompleted(at offsets: IndexSet, record: DayRecord) {
-        let titles = offsets.map { record.completedTaskTitles[$0] }
-        record.completedTaskTitles.remove(atOffsets: offsets)
-        record.allTaskTitles.removeAll { titles.contains($0) }
-        save(record)
+    private func renameTask(from oldTitle: String, to newTitle: String) {
+        func replace(in array: inout [String]) {
+            if let i = array.firstIndex(of: oldTitle) { array[i] = newTitle }
+        }
+        replace(in: &record.allTaskTitles)
+        replace(in: &record.completedTaskTitles)
+        replace(in: &record.partiallyCompletedTaskTitles)
+        save()
     }
 
-    private func removeFromPartial(at offsets: IndexSet, record: DayRecord) {
-        let titles = offsets.map { record.partiallyCompletedTaskTitles[$0] }
-        record.partiallyCompletedTaskTitles.remove(atOffsets: offsets)
-        record.allTaskTitles.removeAll { titles.contains($0) }
-        save(record)
-    }
-
-    private func removeFromIncomplete(_ offsets: IndexSet, titles incompleteTitles: [String], record: DayRecord) {
-        let toRemove = offsets.map { incompleteTitles[$0] }
-        record.allTaskTitles.removeAll { toRemove.contains($0) }
-        save(record)
-    }
-
-    private func save(_ record: DayRecord) {
+    private func save() {
         try? modelContext.save()
         Task { await SupabaseManager.shared.upsertDayRecord(record) }
     }
@@ -195,3 +212,54 @@ struct DaySummaryView: View {
         return "xmark.circle.fill"
     }
 }
+
+// MARK: - Rename sheet
+
+private struct RenameTaskView: View {
+    let currentTitle: String
+    let onSave: (String) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var title = ""
+    @FocusState private var isFocused: Bool
+
+    private var trimmed: String { title.trimmingCharacters(in: .whitespaces) }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Task name", text: $title)
+                        .focused($isFocused)
+                        .submitLabel(.done)
+                        .onSubmit { submit() }
+                }
+            }
+            .navigationTitle("Rename Task")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { submit() }
+                        .disabled(trimmed.isEmpty || trimmed == currentTitle)
+                }
+            }
+            .onAppear {
+                title = currentTitle
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                    isFocused = true
+                }
+            }
+        }
+        .presentationDetents([.height(200)])
+    }
+
+    private func submit() {
+        guard !trimmed.isEmpty, trimmed != currentTitle else { return }
+        onSave(trimmed)
+        dismiss()
+    }
+}
+

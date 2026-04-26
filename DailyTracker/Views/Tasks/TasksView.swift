@@ -67,6 +67,7 @@ struct TasksView: View {
                             }
                         }
                         .onDelete(perform: deleteTasks)
+                        .onMove(perform: moveTasks)
                     }
                     .listStyle(.insetGrouped)
                     .animation(.default, value: tasks.map(\.isCompleted))
@@ -95,7 +96,7 @@ struct TasksView: View {
                         Image(systemName: "plus")
                     }
                     .accessibilityLabel("Add task")
-                }
+                    }
             }
             .sheet(isPresented: $showingFriends) {
                 FriendsView()
@@ -190,6 +191,19 @@ struct TasksView: View {
         WidgetCenter.shared.reloadAllTimelines()
 
         Task { await SupabaseManager.shared.upsertTask(task) }
+    }
+
+    private func moveTasks(from source: IndexSet, to destination: Int) {
+        var reordered = tasks
+        reordered.move(fromOffsets: source, toOffset: destination)
+        for (newIndex, task) in reordered.enumerated() {
+            task.orderIndex = newIndex
+        }
+        try? modelContext.save()
+        WidgetCenter.shared.reloadAllTimelines()
+        for task in reordered {
+            Task { await SupabaseManager.shared.upsertTask(task) }
+        }
     }
 
     private func deleteTasks(at offsets: IndexSet) {

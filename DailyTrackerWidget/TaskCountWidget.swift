@@ -75,7 +75,11 @@ struct TaskCountWidgetView: View {
     private var ringColor: Color {
         if entry.total == 0 { return .secondary }
         if entry.remaining == 0 { return .green }
-        return .blue
+        switch entry.ratio {
+        case ..<0.4:     return .red
+        case 0.4..<0.75: return .orange
+        default:         return .green
+        }
     }
 
     // MARK: systemSmall
@@ -83,12 +87,12 @@ struct TaskCountWidgetView: View {
     private var systemSmallBody: some View {
         ZStack {
             Circle()
-                .stroke(Color.gray.opacity(0.2), style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                .frame(width: 80, height: 80)
+                .stroke(ringColor.opacity(0.2), style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                .frame(width: 120, height: 120)
             Circle()
                 .trim(from: 0, to: entry.ratio)
                 .stroke(ringColor, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                .frame(width: 80, height: 80)
+                .frame(width: 120, height: 120)
                 .rotationEffect(.degrees(-90))
             VStack(spacing: 4) {
                 if entry.total == 0 {
@@ -107,11 +111,12 @@ struct TaskCountWidgetView: View {
                         .foregroundStyle(.green)
                 } else {
                     Text("\(entry.remaining)")
-                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundStyle(.primary)
-                        .minimumScaleFactor(0.6)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
                     Text(entry.remaining == 1 ? "task left" : "tasks left")
-                        .font(.caption)
+                        .font(.system(size: 11))
                         .foregroundStyle(.secondary)
                 }
             }

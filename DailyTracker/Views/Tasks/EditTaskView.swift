@@ -33,7 +33,9 @@ struct EditTaskView: View {
             }
             .onAppear {
                 title = currentTitle
-                isFocused = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                    isFocused = true
+                }
             }
         }
         .presentationDetents([.height(400)])
