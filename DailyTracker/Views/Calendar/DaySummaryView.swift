@@ -22,7 +22,7 @@ struct DaySummaryView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if let record, record.totalTaskCount > 0 {
+                if let record {
                     SummaryListView(record: record, isPastOrToday: isPastOrToday, isEditing: isEditing)
                 } else {
                     ContentUnavailableView(
@@ -51,6 +51,8 @@ struct DaySummaryView: View {
     }
 }
 
+// MARK: - List
+
 private struct SummaryListView: View {
     let record: DayRecord
     let isPastOrToday: Bool
@@ -58,33 +60,10 @@ private struct SummaryListView: View {
 
     @Environment(\.modelContext) private var modelContext
     @State private var taskToRename: String? = nil
-    @State private var renameText = ""
 
     var body: some View {
         List {
-            Section {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("\(record.completedCount) of \(record.totalTaskCount) completed")
-                                .font(.headline)
-                            if record.partialCount > 0 {
-                                Text("\(record.partialCount) partial")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.orange)
-                            }
-                        }
-                        Spacer()
-                        Label(percentLabel(record.completionRatio), systemImage: statusIcon(record.completionRatio))
-                            .font(.headline)
-                            .foregroundStyle(statusColor(record.completionRatio))
-                    }
-                    ProgressView(value: record.completionRatio)
-                        .tint(statusColor(record.completionRatio))
-                }
-                .padding(.vertical, 4)
-            }
-
+            statsSection
             if isPastOrToday && isEditing {
                 Section {
                     Text("Tap the status icon to cycle completion. Tap the task name to rename it.")
@@ -92,36 +71,7 @@ private struct SummaryListView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-
-            let completedTitles = record.completedTaskTitles
-            let partialTitles = record.partiallyCompletedTaskTitles
-            let incompleteTitles = record.allTaskTitles.filter {
-                !completedTitles.contains($0) && !partialTitles.contains($0)
-            }
-
-            if !completedTitles.isEmpty {
-                Section("Completed") {
-                    ForEach(completedTitles, id: \.self) { title in
-                        taskRow(title: title, icon: "checkmark.circle.fill", color: .green)
-                    }
-                }
-            }
-
-            if !partialTitles.isEmpty {
-                Section("Partial") {
-                    ForEach(partialTitles, id: \.self) { title in
-                        taskRow(title: title, icon: "circle.lefthalf.filled", color: .orange)
-                    }
-                }
-            }
-
-            if !incompleteTitles.isEmpty {
-                Section("Not Completed") {
-                    ForEach(incompleteTitles, id: \.self) { title in
-                        taskRow(title: title, icon: "circle", color: .secondary)
-                    }
-                }
-            }
+            taskSections
         }
         .listStyle(.insetGrouped)
         .sheet(isPresented: Binding(get: { taskToRename != nil }, set: { if !$0 { taskToRename = nil } })) {
@@ -133,11 +83,71 @@ private struct SummaryListView: View {
         }
     }
 
+    // MARK: - Sections
+
+    private var statsSection: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("\(record.completedCount) of \(record.totalTaskCount) completed")
+                            .font(.headline)
+                        if record.partialCount > 0 {
+                            Text("\(record.partialCount) partial")
+                                .font(.subheadline)
+                                .foregroundStyle(.orange)
+                        }
+                    }
+                    Spacer()
+                    Label(percentLabel(record.completionRatio), systemImage: statusIcon(record.completionRatio))
+                        .font(.headline)
+                        .foregroundStyle(statusColor(record.completionRatio))
+                }
+                ProgressView(value: record.completionRatio)
+                    .tint(statusColor(record.completionRatio))
+            }
+            .padding(.vertical, 4)
+        }
+    }
+
+    @ViewBuilder
+    private var taskSections: some View {
+        let completedTitles = record.completedTaskTitles
+        let partialTitles = record.partiallyCompletedTaskTitles
+        let incompleteTitles = record.allTaskTitles.filter {
+            !completedTitles.contains($0) && !partialTitles.contains($0)
+        }
+
+        if !completedTitles.isEmpty {
+            Section("Completed") {
+                ForEach(completedTitles, id: \.self) { title in
+                    taskRow(title: title, icon: "checkmark.circle.fill", color: .green)
+                }
+            }
+        }
+
+        if !partialTitles.isEmpty {
+            Section("Partial") {
+                ForEach(partialTitles, id: \.self) { title in
+                    taskRow(title: title, icon: "circle.lefthalf.filled", color: .orange)
+                }
+            }
+        }
+
+        if !incompleteTitles.isEmpty {
+            Section("Not Completed") {
+                ForEach(incompleteTitles, id: \.self) { title in
+                    taskRow(title: title, icon: "circle", color: .secondary)
+                }
+            }
+        }
+    }
+
     @ViewBuilder
     private func taskRow(title: String, icon: String, color: Color) -> some View {
         if isPastOrToday && isEditing {
             HStack(spacing: 12) {
-                // Status icon — tap to cycle completion
+                // Status icon — tap to cycle: incomplete → partial → complete → incomplete
                 Button {
                     cycleTaskTitle(title)
                 } label: {
@@ -149,7 +159,6 @@ private struct SummaryListView: View {
 
                 // Task name — tap to rename
                 Button {
-                    renameText = title
                     taskToRename = title
                 } label: {
                     Text(title)
@@ -168,15 +177,15 @@ private struct SummaryListView: View {
 
     private func cycleTaskTitle(_ title: String) {
         if record.completedTaskTitles.contains(title) {
-            // complete → partial
+            // complete → incomplete
             record.completedTaskTitles.removeAll { $0 == title }
-            record.partiallyCompletedTaskTitles.append(title)
         } else if record.partiallyCompletedTaskTitles.contains(title) {
-            // partial → incomplete
+            // partial → complete
             record.partiallyCompletedTaskTitles.removeAll { $0 == title }
-        } else {
-            // incomplete → complete
             record.completedTaskTitles.append(title)
+        } else {
+            // incomplete → partial
+            record.partiallyCompletedTaskTitles.append(title)
         }
         save()
     }
@@ -196,9 +205,7 @@ private struct SummaryListView: View {
         Task { await SupabaseManager.shared.upsertDayRecord(record) }
     }
 
-    private func percentLabel(_ ratio: Double) -> String {
-        "\(Int(ratio * 100))%"
-    }
+    private func percentLabel(_ ratio: Double) -> String { "\(Int(ratio * 100))%" }
 
     private func statusColor(_ ratio: Double) -> Color {
         if ratio == 1.0 { return .green }
@@ -262,4 +269,3 @@ private struct RenameTaskView: View {
         dismiss()
     }
 }
-

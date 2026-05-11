@@ -137,6 +137,9 @@ struct TasksView: View {
 
         guard lastReset != today else { return }
 
+        // Snapshot the previous day's final state before wiping completions
+        saveRecord(from: tasks, forDate: lastReset)
+
         for task in tasks {
             task.isCompleted = false
             task.isPartial = false
@@ -224,21 +227,21 @@ struct TasksView: View {
 
     // MARK: - Persistence
 
-    private func saveRecord(from taskList: [TaskItem]) {
-        let today = todayString
+    private func saveRecord(from taskList: [TaskItem], forDate dateString: String? = nil) {
+        let targetDate = dateString ?? todayString
         let allTitles = taskList.map { $0.title }
         let completedTitles = taskList.filter { $0.isCompleted }.map { $0.title }
         let partialTitles = taskList.filter { $0.isPartial }.map { $0.title }
 
         let record: DayRecord
-        if let existing = dayRecords.first(where: { $0.dateString == today }) {
+        if let existing = dayRecords.first(where: { $0.dateString == targetDate }) {
             existing.allTaskTitles = allTitles
             existing.completedTaskTitles = completedTitles
             existing.partiallyCompletedTaskTitles = partialTitles
             record = existing
         } else {
             record = DayRecord(
-                dateString: today,
+                dateString: targetDate,
                 allTaskTitles: allTitles,
                 completedTaskTitles: completedTitles,
                 partiallyCompletedTaskTitles: partialTitles

@@ -3,6 +3,7 @@ import SwiftData
 
 struct CalendarView: View {
     @Query private var dayRecords: [DayRecord]
+    @Environment(\.modelContext) private var modelContext
 
     @State private var currentMonth: Date = Date()
     @State private var selectedDayString: String? = nil
@@ -24,7 +25,25 @@ struct CalendarView: View {
                     record: record(for: selected.dateString)
                 )
             }
+            .task {
+                await syncDayRecords()
+            }
         }
+    }
+
+    private func syncDayRecords() async {
+        guard let rows = try? await SupabaseManager.shared.fetchDayRecords() else { return }
+        let existingDates = Set(dayRecords.map(\.dateString))
+        for row in rows where !existingDates.contains(row.dateString) {
+            let record = DayRecord(
+                dateString: row.dateString,
+                allTaskTitles: row.allTaskTitles,
+                completedTaskTitles: row.completedTaskTitles,
+                partiallyCompletedTaskTitles: row.partiallyCompletedTaskTitles
+            )
+            modelContext.insert(record)
+        }
+        try? modelContext.save()
     }
 
     private func record(for dateString: String) -> DayRecord? {
