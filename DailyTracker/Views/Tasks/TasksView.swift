@@ -5,13 +5,24 @@ import WidgetKit
 struct TasksView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
-    @Query(sort: \TaskItem.orderIndex) private var tasks: [TaskItem]
+    @Query private var tasks: [TaskItem]
     @Query private var dayRecords: [DayRecord]
 
+    let userId: String
     @State private var showingAddTask = false
     @State private var showCelebration = false
     @State private var taskToEdit: TaskItem? = nil
     @State private var showingFriends = false
+
+    init(userId: String) {
+        self.userId = userId
+        let uid = userId
+        _tasks = Query(
+            filter: #Predicate<TaskItem> { $0.userId == uid },
+            sort: \.orderIndex
+        )
+        _dayRecords = Query(filter: #Predicate<DayRecord> { $0.userId == uid })
+    }
 
     private var todayString: String { Date().dayString }
 
@@ -183,7 +194,7 @@ struct TasksView: View {
     }
 
     private func addTask(title: String) {
-        let task = TaskItem(title: title, orderIndex: tasks.count)
+        let task = TaskItem(title: title, orderIndex: tasks.count, userId: userId)
         modelContext.insert(task)
         try? modelContext.save()
         saveRecord(from: tasks + [task])
@@ -227,7 +238,8 @@ struct TasksView: View {
                 dateString: today,
                 allTaskTitles: allTitles,
                 completedTaskTitles: completedTitles,
-                partiallyCompletedTaskTitles: partialTitles
+                partiallyCompletedTaskTitles: partialTitles,
+                userId: userId
             )
             modelContext.insert(record)
         }

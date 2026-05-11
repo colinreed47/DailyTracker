@@ -4,6 +4,7 @@ import SwiftData
 @Model
 final class DayRecord {
     var id: UUID
+    @Attribute var userId: String
     /// Date stored as "yyyy-MM-dd" string for easy keying
     var dateString: String
     /// All task titles that existed this day (for showing incomplete tasks in summary)
@@ -21,8 +22,9 @@ final class DayRecord {
         return (Double(completedCount) + Double(partialCount) * 0.5) / Double(totalTaskCount)
     }
 
-    init(dateString: String, allTaskTitles: [String], completedTaskTitles: [String], partiallyCompletedTaskTitles: [String] = []) {
+    init(dateString: String, allTaskTitles: [String], completedTaskTitles: [String], partiallyCompletedTaskTitles: [String] = [], userId: String = "") {
         self.id = UUID()
+        self.userId = userId
         self.dateString = dateString
         self.allTaskTitles = allTaskTitles
         self.completedTaskTitles = completedTaskTitles
