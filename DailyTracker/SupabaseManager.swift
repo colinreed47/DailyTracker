@@ -56,10 +56,11 @@ final class SupabaseManager {
     }
 
     func fetchDayRecords() async throws -> [DayRecordRowDecodable] {
-        guard userId != nil else { return [] }
+        guard let userId else { return [] }
         return try await client
             .from("day_records")
             .select("id, date_string, all_task_titles, completed_task_titles, partially_completed_task_titles")
+            .eq("user_id", value: userId.uuidString)
             .execute()
             .value
     }
