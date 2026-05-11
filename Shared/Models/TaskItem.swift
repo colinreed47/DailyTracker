@@ -4,7 +4,7 @@ import SwiftData
 @Model
 final class TaskItem {
     var id: UUID
-    var userId: String
+    @Attribute var userId: String
     var title: String
     var isCompleted: Bool
     var isPartial: Bool

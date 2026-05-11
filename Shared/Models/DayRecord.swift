@@ -4,7 +4,7 @@ import SwiftData
 @Model
 final class DayRecord {
     var id: UUID
-    var userId: String
+    @Attribute var userId: String
     /// Date stored as "yyyy-MM-dd" string for easy keying
     var dateString: String
     /// All task titles that existed this day (for showing incomplete tasks in summary)

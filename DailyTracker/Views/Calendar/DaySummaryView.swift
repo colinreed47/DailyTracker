@@ -183,8 +183,9 @@ struct DaySummaryView: View {
     }
 
     private func makeRecord() -> DayRecord {
+        let uid = userId
         if let existing = try? modelContext.fetch(
-            FetchDescriptor<DayRecord>(predicate: #Predicate { $0.dateString == dateString })
+            FetchDescriptor<DayRecord>(predicate: #Predicate { $0.dateString == dateString && $0.userId == uid })
         ).first {
             createdRecord = existing
             return existing

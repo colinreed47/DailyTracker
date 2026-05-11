@@ -10,6 +10,9 @@ struct TasksView: View {
 
     let userId: String
     @State private var showingAddTask = false
+    @State private var showCelebration = false
+    @State private var taskToEdit: TaskItem? = nil
+    @State private var showingFriends = false
 
     init(userId: String) {
         self.userId = userId
@@ -20,9 +23,6 @@ struct TasksView: View {
         )
         _dayRecords = Query(filter: #Predicate<DayRecord> { $0.userId == uid })
     }
-    @State private var showCelebration = false
-    @State private var taskToEdit: TaskItem? = nil
-    @State private var showingFriends = false
 
     private var todayString: String { Date().dayString }
 
