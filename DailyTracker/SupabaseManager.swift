@@ -47,9 +47,13 @@ final class SupabaseManager {
     }
 
     func deleteTask(id: UUID) async {
-        guard userId != nil else { return }
+        guard let userId else { return }
         do {
-            try await client.from("task_items").delete().eq("id", value: id.uuidString).execute()
+            try await client.from("task_items")
+                .delete()
+                .eq("id", value: id.uuidString)
+                .eq("user_id", value: userId.uuidString)
+                .execute()
         } catch {
             print("[Supabase] delete task error: \(error)")
         }

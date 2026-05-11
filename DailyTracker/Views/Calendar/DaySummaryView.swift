@@ -4,11 +4,23 @@ import SwiftData
 struct DaySummaryView: View {
     let dateString: String
     let record: DayRecord?
+    let userId: String
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \TaskItem.orderIndex) private var taskItems: [TaskItem]
+    @Query private var taskItems: [TaskItem]
     @State private var createdRecord: DayRecord? = nil
+
+    init(dateString: String, record: DayRecord?, userId: String) {
+        self.dateString = dateString
+        self.record = record
+        self.userId = userId
+        let uid = userId
+        _taskItems = Query(
+            filter: #Predicate<TaskItem> { $0.userId == uid },
+            sort: \.orderIndex
+        )
+    }
 
     private var activeRecord: DayRecord? { record ?? createdRecord }
 
@@ -180,7 +192,8 @@ struct DaySummaryView: View {
         let newRecord = DayRecord(
             dateString: dateString,
             allTaskTitles: taskItems.map { $0.title },
-            completedTaskTitles: []
+            completedTaskTitles: [],
+            userId: userId
         )
         modelContext.insert(newRecord)
         createdRecord = newRecord

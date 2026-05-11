@@ -4,8 +4,15 @@ import SwiftData
 struct CalendarView: View {
     @Query private var dayRecords: [DayRecord]
 
+    let userId: String
     @State private var currentMonth: Date = Date()
     @State private var selectedDayString: String? = nil
+
+    init(userId: String) {
+        self.userId = userId
+        let uid = userId
+        _dayRecords = Query(filter: #Predicate<DayRecord> { $0.userId == uid })
+    }
 
     var body: some View {
         NavigationStack {
@@ -21,7 +28,8 @@ struct CalendarView: View {
             .sheet(item: selectedDayBinding) { selected in
                 DaySummaryView(
                     dateString: selected.dateString,
-                    record: record(for: selected.dateString)
+                    record: record(for: selected.dateString),
+                    userId: userId
                 )
             }
         }
