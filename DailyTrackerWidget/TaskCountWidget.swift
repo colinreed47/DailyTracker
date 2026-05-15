@@ -34,8 +34,12 @@ struct TaskCountProvider: TimelineProvider {
     private func makeEntry() -> TaskCountEntry {
         let container = SharedDataStore.makeContainer()
         let context = ModelContext(container)
-        resetTasksIfNewDay(context: context)
-        let tasks = (try? context.fetch(FetchDescriptor<TaskItem>())) ?? []
+        let currentUserId = SharedDataStore.sharedDefaults.string(forKey: "currentUserId") ?? ""
+        resetTasksIfNewDay(context: context, userId: currentUserId)
+        let uid = currentUserId
+        let tasks = (try? context.fetch(
+            FetchDescriptor<TaskItem>(predicate: #Predicate { $0.userId == uid })
+        )) ?? []
         return TaskCountEntry(
             date: Date(),
             completed: tasks.filter(\.isCompleted).count,
@@ -43,12 +47,15 @@ struct TaskCountProvider: TimelineProvider {
         )
     }
 
-    private func resetTasksIfNewDay(context: ModelContext) {
+    private func resetTasksIfNewDay(context: ModelContext, userId: String) {
         let today = DateFormatter.dayFormatter.string(from: Date())
         let defaults = SharedDataStore.sharedDefaults
         guard defaults.string(forKey: "lastResetDate") != today else { return }
-        let tasks = (try? context.fetch(FetchDescriptor<TaskItem>())) ?? []
-        for task in tasks { task.isCompleted = false }
+        let uid = userId
+        let tasks = (try? context.fetch(
+            FetchDescriptor<TaskItem>(predicate: #Predicate { $0.userId == uid })
+        )) ?? []
+        for task in tasks { task.isCompleted = false; task.isPartial = false }
         try? context.save()
         defaults.set(today, forKey: "lastResetDate")
     }

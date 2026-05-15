@@ -20,8 +20,13 @@ struct ToggleTaskIntent: AppIntent {
         let container = SharedDataStore.makeContainer()
         let context = ModelContext(container)
 
+        let currentUserId = SharedDataStore.sharedDefaults.string(forKey: "currentUserId") ?? ""
+        let uid = currentUserId
         let tasks = (try? context.fetch(
-            FetchDescriptor<TaskItem>(sortBy: [SortDescriptor(\.orderIndex)])
+            FetchDescriptor<TaskItem>(
+                predicate: #Predicate { $0.userId == uid },
+                sortBy: [SortDescriptor(\.orderIndex)]
+            )
         )) ?? []
 
         guard let task = tasks.first(where: { $0.id == id }) else { return .result() }
@@ -41,13 +46,16 @@ struct ToggleTaskIntent: AppIntent {
         let completedTitles = tasks.filter(\.isCompleted).map(\.title)
         let partialTitles = tasks.filter(\.isPartial).map(\.title)
 
-        let records = (try? context.fetch(FetchDescriptor<DayRecord>())) ?? []
+        let records = (try? context.fetch(
+            FetchDescriptor<DayRecord>(predicate: #Predicate { $0.userId == uid })
+        )) ?? []
         if let existing = records.first(where: { $0.dateString == today }) {
             existing.allTaskTitles = allTitles
             existing.completedTaskTitles = completedTitles
             existing.partiallyCompletedTaskTitles = partialTitles
         } else {
             context.insert(DayRecord(
+                userId: currentUserId,
                 dateString: today,
                 allTaskTitles: allTitles,
                 completedTaskTitles: completedTitles,

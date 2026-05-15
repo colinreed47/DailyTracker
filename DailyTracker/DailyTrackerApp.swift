@@ -3,13 +3,15 @@ import SwiftData
 
 @main
 struct DailyTrackerApp: App {
+    @State private var supabaseManager = SupabaseManager.shared
     let sharedModelContainer: ModelContainer = SharedDataStore.makeContainer()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(supabaseManager)
                 .task {
-                    await SupabaseManager.shared.signInIfNeeded()
+                    await supabaseManager.signInIfNeeded()
                 }
         }
         .modelContainer(sharedModelContainer)

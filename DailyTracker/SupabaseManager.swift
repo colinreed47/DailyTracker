@@ -1,7 +1,9 @@
 import Foundation
+import Observation
 import Supabase
 
 @MainActor
+@Observable
 final class SupabaseManager {
     static let shared = SupabaseManager()
 
@@ -12,7 +14,16 @@ final class SupabaseManager {
 
     private(set) var userId: UUID?
 
-    private init() {}
+    /// The userId string used by SwiftData queries; empty string before auth resolves.
+    var userIdString: String { userId?.uuidString ?? "" }
+
+    private init() {
+        // Restore from cache so userIdString is synchronously available on re-launch
+        if let stored = SharedDataStore.sharedDefaults.string(forKey: "currentUserId"),
+           let id = UUID(uuidString: stored) {
+            userId = id
+        }
+    }
 
     func signInIfNeeded() async {
         do {
@@ -25,6 +36,9 @@ final class SupabaseManager {
             } catch {
                 print("[Supabase] Auth error: \(error)")
             }
+        }
+        if let id = userId {
+            SharedDataStore.sharedDefaults.set(id.uuidString, forKey: "currentUserId")
         }
     }
 

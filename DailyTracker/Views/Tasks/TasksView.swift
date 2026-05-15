@@ -5,13 +5,27 @@ import WidgetKit
 struct TasksView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
-    @Query(sort: \TaskItem.orderIndex) private var tasks: [TaskItem]
+    @Query private var tasks: [TaskItem]
     @Query private var dayRecords: [DayRecord]
+
+    let userId: String
 
     @State private var showingAddTask = false
     @State private var showCelebration = false
     @State private var taskToEdit: TaskItem? = nil
     @State private var showingFriends = false
+
+    init(userId: String) {
+        self.userId = userId
+        let uid = userId
+        _tasks = Query(
+            filter: #Predicate<TaskItem> { $0.userId == uid },
+            sort: [\TaskItem.orderIndex]
+        )
+        _dayRecords = Query(
+            filter: #Predicate<DayRecord> { $0.userId == uid }
+        )
+    }
 
     private var todayString: String { Date().dayString }
 
@@ -119,6 +133,10 @@ struct TasksView: View {
                     performDayResetIfNeeded()
                 }
             }
+            .task(id: userId) {
+                guard !userId.isEmpty else { return }
+                migrateUntaggedRecords()
+            }
         }
     }
 
@@ -186,8 +204,24 @@ struct TasksView: View {
         Task { await SupabaseManager.shared.upsertTask(task) }
     }
 
+    private func migrateUntaggedRecords() {
+        let untaggedTasks = (try? modelContext.fetch(
+            FetchDescriptor<TaskItem>(predicate: #Predicate { $0.userId.isEmpty })
+        )) ?? []
+        untaggedTasks.forEach { $0.userId = userId }
+
+        let untaggedRecords = (try? modelContext.fetch(
+            FetchDescriptor<DayRecord>(predicate: #Predicate { $0.userId.isEmpty })
+        )) ?? []
+        untaggedRecords.forEach { $0.userId = userId }
+
+        if !untaggedTasks.isEmpty || !untaggedRecords.isEmpty {
+            try? modelContext.save()
+        }
+    }
+
     private func addTask(title: String) {
-        let task = TaskItem(title: title, orderIndex: tasks.count)
+        let task = TaskItem(title: title, orderIndex: tasks.count, userId: userId)
         modelContext.insert(task)
         try? modelContext.save()
         saveRecord(from: tasks + [task])
@@ -241,6 +275,7 @@ struct TasksView: View {
             record = existing
         } else {
             record = DayRecord(
+                userId: userId,
                 dateString: targetDate,
                 allTaskTitles: allTitles,
                 completedTaskTitles: completedTitles,

@@ -55,18 +55,26 @@ struct TaskListProvider: TimelineProvider {
     private func fetchSnapshots() -> [TaskSnapshot] {
         let container = SharedDataStore.makeContainer()
         let context = ModelContext(container)
-        resetTasksIfNewDay(context: context)
+        let currentUserId = SharedDataStore.sharedDefaults.string(forKey: "currentUserId") ?? ""
+        resetTasksIfNewDay(context: context, userId: currentUserId)
+        let uid = currentUserId
         let tasks = (try? context.fetch(
-            FetchDescriptor<TaskItem>(sortBy: [SortDescriptor(\.orderIndex)])
+            FetchDescriptor<TaskItem>(
+                predicate: #Predicate { $0.userId == uid },
+                sortBy: [SortDescriptor(\.orderIndex)]
+            )
         )) ?? []
         return tasks.map { TaskSnapshot(id: $0.id, title: $0.title, isCompleted: $0.isCompleted, isPartial: $0.isPartial) }
     }
 
-    private func resetTasksIfNewDay(context: ModelContext) {
+    private func resetTasksIfNewDay(context: ModelContext, userId: String) {
         let today = DateFormatter.dayFormatter.string(from: Date())
         let defaults = SharedDataStore.sharedDefaults
         guard defaults.string(forKey: "lastResetDate") != today else { return }
-        let tasks = (try? context.fetch(FetchDescriptor<TaskItem>())) ?? []
+        let uid = userId
+        let tasks = (try? context.fetch(
+            FetchDescriptor<TaskItem>(predicate: #Predicate { $0.userId == uid })
+        )) ?? []
         for task in tasks {
             task.isCompleted = false
             task.isPartial = false

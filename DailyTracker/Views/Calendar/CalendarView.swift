@@ -5,8 +5,18 @@ struct CalendarView: View {
     @Query private var dayRecords: [DayRecord]
     @Environment(\.modelContext) private var modelContext
 
+    let userId: String
+
     @State private var currentMonth: Date = Date()
     @State private var selectedDayString: String? = nil
+
+    init(userId: String) {
+        self.userId = userId
+        let uid = userId
+        _dayRecords = Query(
+            filter: #Predicate<DayRecord> { $0.userId == uid }
+        )
+    }
 
     var body: some View {
         NavigationStack {
@@ -36,6 +46,7 @@ struct CalendarView: View {
         let existingDates = Set(dayRecords.map(\.dateString))
         for row in rows where !existingDates.contains(row.dateString) {
             let record = DayRecord(
+                userId: userId,
                 dateString: row.dateString,
                 allTaskTitles: row.allTaskTitles,
                 completedTaskTitles: row.completedTaskTitles,
