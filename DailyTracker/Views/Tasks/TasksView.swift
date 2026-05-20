@@ -20,7 +20,7 @@ struct TasksView: View {
         let uid = userId
         _tasks = Query(
             filter: #Predicate<TaskItem> { $0.userId == uid },
-            sort: [\TaskItem.orderIndex]
+            sort: [SortDescriptor(\TaskItem.orderIndex)]
         )
         _dayRecords = Query(
             filter: #Predicate<DayRecord> { $0.userId == uid }
@@ -136,6 +136,9 @@ struct TasksView: View {
             .task(id: userId) {
                 guard !userId.isEmpty else { return }
                 migrateUntaggedRecords()
+                if tasks.isEmpty {
+                    await restoreTasksFromSupabase()
+                }
             }
         }
     }
@@ -202,6 +205,47 @@ struct TasksView: View {
         saveRecord(from: tasks)
         WidgetCenter.shared.reloadAllTimelines()
         Task { await SupabaseManager.shared.upsertTask(task) }
+    }
+
+    private func restoreTasksFromSupabase() async {
+        // Guard via direct fetch — @Query may not have refreshed after migrateUntaggedRecords()
+        let localCount = (try? modelContext.fetch(
+            FetchDescriptor<TaskItem>(predicate: #Predicate { $0.userId == userId })
+        ))?.count ?? 0
+        guard localCount == 0 else { return }
+
+        // Primary: restore from task_items table (full fidelity)
+        if let rows = try? await SupabaseManager.shared.fetchTasks(), !rows.isEmpty {
+            var restored: [TaskItem] = []
+            for row in rows {
+                let task = TaskItem(title: row.title, orderIndex: row.orderIndex, userId: userId)
+                task.id = row.id
+                task.isCompleted = row.isCompleted
+                task.isPartial = row.isPartial
+                task.createdAt = row.createdAt
+                modelContext.insert(task)
+                restored.append(task)
+            }
+            try? modelContext.save()
+            saveRecord(from: restored)
+            WidgetCenter.shared.reloadAllTimelines()
+            return
+        }
+
+        // Fallback: reconstruct task titles from the most recent day record
+        guard let dayRows = try? await SupabaseManager.shared.fetchDayRecords(),
+              let latest = dayRows.max(by: { $0.dateString < $1.dateString }),
+              !latest.allTaskTitles.isEmpty else { return }
+
+        var restored: [TaskItem] = []
+        for (index, title) in latest.allTaskTitles.enumerated() {
+            let task = TaskItem(title: title, orderIndex: index, userId: userId)
+            modelContext.insert(task)
+            restored.append(task)
+        }
+        try? modelContext.save()
+        saveRecord(from: restored)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     private func migrateUntaggedRecords() {

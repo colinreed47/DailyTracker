@@ -4,6 +4,7 @@ import SwiftData
 struct DaySummaryView: View {
     let dateString: String
     let record: DayRecord?
+    var fallbackTaskTitles: [String] = []
 
     @Environment(\.dismiss) private var dismiss
     @State private var isEditing = false
@@ -24,6 +25,8 @@ struct DaySummaryView: View {
             Group {
                 if let record {
                     SummaryListView(record: record, isPastOrToday: isPastOrToday, isEditing: isEditing)
+                } else if !fallbackTaskTitles.isEmpty && isPastOrToday {
+                    FallbackSummaryView(taskTitles: fallbackTaskTitles)
                 } else {
                     ContentUnavailableView(
                         "No Data",
@@ -217,6 +220,33 @@ private struct SummaryListView: View {
         if ratio == 1.0 { return "checkmark.circle.fill" }
         if ratio > 0 { return "circle.lefthalf.filled" }
         return "xmark.circle.fill"
+    }
+}
+
+// MARK: - Fallback (no record, show tasks as uncompleted)
+
+private struct FallbackSummaryView: View {
+    let taskTitles: [String]
+
+    var body: some View {
+        List {
+            Section {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("0 of \(taskTitles.count) completed")
+                        .font(.headline)
+                    ProgressView(value: 0)
+                        .tint(.red)
+                }
+                .padding(.vertical, 4)
+            }
+            Section("Not Completed") {
+                ForEach(taskTitles, id: \.self) { title in
+                    Label(title, systemImage: "circle")
+                        .foregroundStyle(Color.primary)
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
     }
 }
 

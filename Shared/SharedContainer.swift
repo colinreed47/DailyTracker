@@ -17,10 +17,19 @@ enum SharedDataStore {
             forSecurityApplicationGroupIdentifier: appGroupID
         ) {
             let storeURL = groupURL.appendingPathComponent("DailyTracker.store")
-            if let container = try? ModelContainer(
-                for: schema,
-                configurations: [ModelConfiguration(schema: schema, url: storeURL)]
-            ) {
+            let config = ModelConfiguration(schema: schema, url: storeURL)
+            if let container = try? ModelContainer(for: schema, configurations: [config]) {
+                return container
+            }
+
+            // Migration failed (e.g. schema added non-optional fields without a migration plan).
+            // Delete the old store so the next open starts clean. Local data will re-sync from Supabase.
+            let fm = FileManager.default
+            for ext in ["", "-shm", "-wal"] {
+                let url = groupURL.appendingPathComponent("DailyTracker.store\(ext)")
+                try? fm.removeItem(at: url)
+            }
+            if let container = try? ModelContainer(for: schema, configurations: [config]) {
                 return container
             }
         }

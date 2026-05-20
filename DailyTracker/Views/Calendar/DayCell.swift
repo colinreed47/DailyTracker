@@ -3,6 +3,7 @@ import SwiftUI
 struct DayCell: View {
     let dateString: String
     let record: DayRecord?
+    let currentTaskCount: Int
     let onTap: () -> Void
 
     private var dayNumber: String {
@@ -24,7 +25,12 @@ struct DayCell: View {
     }
 
     private var dayCompletion: DayCompletion {
-        guard let record, record.totalTaskCount > 0 else { return .none }
+        guard let record else {
+            return isPastOrToday && currentTaskCount > 0 ? .missed : .none
+        }
+        guard record.totalTaskCount > 0 else {
+            return isPastOrToday && currentTaskCount > 0 ? .missed : .none
+        }
         if record.completedCount == record.totalTaskCount { return .complete }
         if record.completedCount + record.partialCount > 0 { return .partial }
         if isPastOrToday { return .missed }

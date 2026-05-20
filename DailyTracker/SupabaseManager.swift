@@ -69,6 +69,17 @@ final class SupabaseManager {
         }
     }
 
+    func fetchTasks() async throws -> [TaskItemRowDecodable] {
+        guard let userId else { return [] }
+        return try await client
+            .from("task_items")
+            .select("id, title, is_completed, is_partial, order_index, created_at")
+            .eq("user_id", value: userId.uuidString)
+            .order("order_index")
+            .execute()
+            .value
+    }
+
     func fetchDayRecords() async throws -> [DayRecordRowDecodable] {
         guard let userId else { return [] }
         return try await client
@@ -94,6 +105,23 @@ final class SupabaseManager {
         } catch {
             print("[Supabase] upsert day record error: \(error)")
         }
+    }
+}
+
+struct TaskItemRowDecodable: Decodable {
+    let id: UUID
+    let title: String
+    let isCompleted: Bool
+    let isPartial: Bool
+    let orderIndex: Int
+    let createdAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case id, title
+        case isCompleted = "is_completed"
+        case isPartial = "is_partial"
+        case orderIndex = "order_index"
+        case createdAt = "created_at"
     }
 }
 

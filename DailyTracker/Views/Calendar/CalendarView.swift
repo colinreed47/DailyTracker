@@ -3,6 +3,7 @@ import SwiftData
 
 struct CalendarView: View {
     @Query private var dayRecords: [DayRecord]
+    @Query private var tasks: [TaskItem]
     @Environment(\.modelContext) private var modelContext
 
     let userId: String
@@ -16,14 +17,21 @@ struct CalendarView: View {
         _dayRecords = Query(
             filter: #Predicate<DayRecord> { $0.userId == uid }
         )
+        _tasks = Query(
+            filter: #Predicate<TaskItem> { $0.userId == uid },
+            sort: [SortDescriptor(\TaskItem.orderIndex)]
+        )
     }
+
+    private var currentTaskTitles: [String] { tasks.map(\.title) }
 
     var body: some View {
         NavigationStack {
             CalendarGridView(currentMonth: $currentMonth) { dayString in
                 DayCell(
                     dateString: dayString,
-                    record: record(for: dayString)
+                    record: record(for: dayString),
+                    currentTaskCount: currentTaskTitles.count
                 ) {
                     selectedDayString = dayString
                 }
@@ -32,7 +40,8 @@ struct CalendarView: View {
             .sheet(item: selectedDayBinding) { selected in
                 DaySummaryView(
                     dateString: selected.dateString,
-                    record: record(for: selected.dateString)
+                    record: record(for: selected.dateString),
+                    fallbackTaskTitles: currentTaskTitles
                 )
             }
             .task {
