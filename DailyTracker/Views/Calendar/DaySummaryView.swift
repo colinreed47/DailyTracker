@@ -187,6 +187,9 @@ struct DaySummaryView: View {
         if let existing = try? modelContext.fetch(
             FetchDescriptor<DayRecord>(predicate: #Predicate { $0.dateString == dateString && $0.userId == uid })
         ).first {
+            if existing.allTaskTitles.isEmpty {
+                existing.allTaskTitles = taskItems.map { $0.title }
+            }
             createdRecord = existing
             return existing
         }
