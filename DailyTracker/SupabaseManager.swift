@@ -18,13 +18,31 @@ final class SupabaseManager {
         do {
             let session = try await client.auth.session
             userId = session.user.id
+            return
         } catch {
-            do {
-                let session = try await client.auth.signInAnonymously()
-                userId = session.user.id
-            } catch {
-                print("[Supabase] Auth error: \(error)")
-            }
+            print("[Supabase] session load error: \(error)")
+        }
+
+        // A failure above (e.g. token refresh with no network right after a
+        // reboot) does not mean the account is gone. Creating a new anonymous
+        // user here would orphan all data keyed to the old user ID, so fall
+        // back to the identity we already know about instead.
+        if let session = client.auth.currentSession {
+            userId = session.user.id
+            return
+        }
+        if let cached = SharedDataStore.sharedDefaults.string(forKey: "currentUserId"),
+           let cachedId = UUID(uuidString: cached) {
+            userId = cachedId
+            return
+        }
+
+        // No stored session and no previously known user: true first launch.
+        do {
+            let session = try await client.auth.signInAnonymously()
+            userId = session.user.id
+        } catch {
+            print("[Supabase] Auth error: \(error)")
         }
     }
 
