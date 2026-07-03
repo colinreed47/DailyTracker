@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct ContentView: View {
     let userId: String
@@ -18,10 +19,77 @@ struct ContentView: View {
                     Label("Calendar", systemImage: "calendar")
                 }
         }
-        .onChange(of: userId) { _, newId in
-            guard !newId.isEmpty else { return }
-            adoptOrphanedData(to: newId)
+        .task(id: userId) {
+            guard !userId.isEmpty else { return }
+            adoptOrphanedData(to: userId)
+            await restoreFromCloudIfNeeded()
         }
+    }
+
+    /// Pulls this user's tasks and history down from Supabase. Runs after an
+    /// account recovery, or when the local store has nothing for this user
+    /// (fresh install / new device). The cloud is otherwise write-only, so
+    /// without this there is no way to get server-side data back.
+    private func restoreFromCloudIfNeeded() async {
+        let defaults = SharedDataStore.sharedDefaults
+        let flagged = defaults.bool(forKey: "needsCloudRestore")
+        let uid = userId
+
+        let localTasks = (try? modelContext.fetch(
+            FetchDescriptor<TaskItem>(predicate: #Predicate { $0.userId == uid })
+        )) ?? []
+        let localRecords = (try? modelContext.fetch(
+            FetchDescriptor<DayRecord>(predicate: #Predicate { $0.userId == uid })
+        )) ?? []
+        guard flagged || (localTasks.isEmpty && localRecords.isEmpty) else { return }
+
+        let remoteTasks = await SupabaseManager.shared.fetchRemoteTasks()
+        let remoteRecords = await SupabaseManager.shared.fetchRemoteDayRecords()
+        defaults.set(false, forKey: "needsCloudRestore")
+        guard !remoteTasks.isEmpty || !remoteRecords.isEmpty else { return }
+
+        var existingTaskIds = Set(localTasks.map(\.id))
+        var existingTitles = Set(localTasks.map(\.title))
+        var nextOrderIndex = (localTasks.map(\.orderIndex).max() ?? -1) + 1
+        for remote in remoteTasks {
+            guard !existingTaskIds.contains(remote.id),
+                  !existingTitles.contains(remote.title) else { continue }
+            let task = TaskItem(title: remote.title, orderIndex: nextOrderIndex, userId: userId)
+            task.id = remote.id
+            task.isCompleted = remote.isCompleted
+            task.isPartial = remote.isPartial
+            task.createdAt = remote.createdAt
+            modelContext.insert(task)
+            existingTaskIds.insert(remote.id)
+            existingTitles.insert(remote.title)
+            nextOrderIndex += 1
+        }
+
+        var recordsByDate = Dictionary(
+            localRecords.map { ($0.dateString, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        for remote in remoteRecords {
+            if let existing = recordsByDate[remote.dateString] {
+                existing.allTaskTitles = merged(existing.allTaskTitles, remote.allTaskTitles)
+                existing.completedTaskTitles = merged(existing.completedTaskTitles, remote.completedTaskTitles)
+                existing.partiallyCompletedTaskTitles = merged(existing.partiallyCompletedTaskTitles, remote.partiallyCompletedTaskTitles)
+            } else {
+                let record = DayRecord(
+                    dateString: remote.dateString,
+                    allTaskTitles: remote.allTaskTitles,
+                    completedTaskTitles: remote.completedTaskTitles,
+                    partiallyCompletedTaskTitles: remote.partiallyCompletedTaskTitles,
+                    userId: userId
+                )
+                record.id = remote.id
+                modelContext.insert(record)
+                recordsByDate[remote.dateString] = record
+            }
+        }
+
+        try? modelContext.save()
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     /// Rebinds records stored under a stale identity to the current user.
