@@ -13,6 +13,11 @@ final class FriendsViewModel {
     private var userId: UUID? { SupabaseManager.shared.userId }
 
     func load() async {
+        // `userId` can be a cached last-known identity with no backing
+        // session (see SupabaseManager.isAuthenticated) — every call below
+        // is RLS-guarded and would just fail silently in that state, so
+        // don't bother making them.
+        guard SupabaseManager.shared.isAuthenticated else { return }
         isLoading = true
         defer { isLoading = false }
         await withTaskGroup(of: Void.self) { group in

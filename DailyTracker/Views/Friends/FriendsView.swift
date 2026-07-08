@@ -8,6 +8,8 @@ struct FriendsView: View {
     @State private var addError: String? = nil
     @State private var editingName = false
     @State private var nameInput = ""
+    @State private var showingLinkEmail = false
+    @State private var showingRecovery = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -22,6 +24,8 @@ struct FriendsView: View {
                 }
 
                 friendsSection
+
+                accountSection
 
                 aboutSection
             }
@@ -42,7 +46,17 @@ struct FriendsView: View {
             .sheet(item: $selectedFriend) { friend in
                 FriendCalendarView(friend: friend, vm: vm)
             }
-            .task { await vm.load() }
+            .sheet(isPresented: $showingLinkEmail) {
+                LinkEmailView()
+            }
+            .sheet(isPresented: $showingRecovery) {
+                RecoverAccountView()
+            }
+            .task(id: SupabaseManager.shared.userId) {
+                // Re-runs (cancelling any in-flight load) after an account
+                // recovery changes the signed-in user.
+                await vm.load()
+            }
         }
     }
 
@@ -176,6 +190,31 @@ struct FriendsView: View {
                     .controlSize(.small)
                 }
             }
+        }
+    }
+
+    // MARK: - Account Section
+
+    private var accountSection: some View {
+        Section {
+            HStack {
+                Text("Email")
+                Spacer()
+                Text(SupabaseManager.shared.linkedEmail ?? "Not linked")
+                    .foregroundStyle(.secondary)
+            }
+            if SupabaseManager.shared.linkedEmail == nil {
+                Button("Link Email to Protect Account") {
+                    showingLinkEmail = true
+                }
+            }
+            Button("Recover Account…") {
+                showingRecovery = true
+            }
+        } header: {
+            Text("Account")
+        } footer: {
+            Text("Linking an email lets you recover your account and data if you're ever signed out — after a reinstall, on a new phone, or if sign-in fails.")
         }
     }
 
