@@ -204,17 +204,17 @@ struct FriendsView: View {
                     .foregroundStyle(.secondary)
             }
             if SupabaseManager.shared.linkedEmail == nil {
-                Button("Link Email to Protect Account") {
+                Button("Create Account") {
                     showingLinkEmail = true
                 }
             }
-            Button("Recover Account…") {
+            Button("Sign In to Existing Account…") {
                 showingRecovery = true
             }
         } header: {
             Text("Account")
         } footer: {
-            Text("Linking an email lets you recover your account and data if you're ever signed out — after a reinstall, on a new phone, or if sign-in fails.")
+            Text("Creating an account lets you sign in and get your tasks and history back if this device is ever reset, reinstalled, or replaced.")
         }
     }
 

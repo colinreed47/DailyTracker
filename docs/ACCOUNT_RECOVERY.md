@@ -59,20 +59,25 @@ stored on the device's local records.
    <p>Your sign-in code is: {{ .Token }}</p>
    ```
 
-3. **In the app** (a build with this branch): open the Friends screen
-   (person icon) → **Account** → **Recover Account…** → enter the email →
-   enter the emailed code. The app switches back to the old user ID; local
-   data is rebound automatically and anything missing locally is pulled down
-   from the database. Friendships work again immediately because the user ID
-   is unchanged.
+3. **In the app** (a build with this branch): if it's a fresh install, the
+   welcome screen offers **I already have an account** directly — tap it,
+   enter the email, enter the emailed code. If the app is already showing an
+   (empty) account, use the Friends screen (person icon) → **Account** →
+   **Sign In to Existing Account…** instead. Either way, the app switches to
+   the old user ID; local data is rebound automatically and anything missing
+   locally is pulled down from the database. Friendships work again
+   immediately because the user ID is unchanged.
 
 4. **Optional cleanup:** delete the accidental new user in Dashboard →
    Authentication → Users. Do this only *after* recovery has completed on the
    device — deleting the user cascade-deletes its rows.
 
-Going forward, every user can pre-empt this entirely: **Account → Link Email
-to Protect Account** attaches an email to the anonymous account, making it
-recoverable on any device.
+Going forward, every user is prompted to pre-empt this entirely: the app now
+nudges anonymous users once they've used it for a day to tap **Create
+Account** (Friends → Account has the same button), which attaches an email to
+the anonymous account and makes it recoverable on any device — from a proper
+**I already have an account** option on the welcome screen, not just a rescue
+path buried in settings.
 
 ## Path B (fallback): reassign the data to the new account
 
@@ -84,10 +89,19 @@ user ID, and the old account can be deleted afterwards.
 ## What the app-side fix changed
 
 - A session-load failure no longer creates a new anonymous account; the app
-  falls back to the stored session or the cached user ID, and only signs in
-  anonymously on a true first launch.
+  falls back to the stored session or the cached user ID, retries on every
+  foreground, and only signs in anonymously when the user explicitly taps
+  **Get Started** on a device with no known identity at all.
+- **First launch now asks.** A brand-new install shows a welcome screen with
+  **Get Started** (new anonymous account, same zero-friction start as before)
+  or **I already have an account** (sign in by email code) — instead of
+  silently assuming "new device = new account", which is what orphaned
+  accounts in the first place.
+- **A one-time "Save Your Account" nudge** appears after a day of anonymous
+  use (and again every few days until acted on) prompting **Create Account**,
+  so protecting the account doesn't depend on someone finding it in settings.
 - Accounts can be protected with a linked email and recovered with a one-time
-  emailed code (Friends screen → Account).
+  emailed code, from both the welcome screen and Friends → Account.
 - The app can now *read* its data back from Supabase (it previously only
   wrote), so a recovered or freshly-installed device restores tasks and
   calendar history from the database.

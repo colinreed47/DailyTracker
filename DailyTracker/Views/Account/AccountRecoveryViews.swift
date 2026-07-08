@@ -37,7 +37,7 @@ struct LinkEmailView: View {
                     }
                 }
             }
-            .navigationTitle("Link Email")
+            .navigationTitle("Create Account")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -71,10 +71,33 @@ struct LinkEmailView: View {
     }
 }
 
-/// Signs this device back into an existing account using a one-time code
-/// sent to the account's linked email. On success the app rebinds local data
-/// and pulls the account's data down from the server.
+/// Signs this device into an existing account using a one-time code sent to
+/// the account's linked email. On success the app rebinds local data and
+/// pulls the account's data down from the server. Used both as the "I
+/// already have an account" path during onboarding and as the "Recover
+/// Account" rescue path from Settings — same flow, different framing.
 struct RecoverAccountView: View {
+    enum Context {
+        case onboarding
+        case settings
+
+        var title: String {
+            switch self {
+            case .onboarding: return "Sign In"
+            case .settings: return "Recover Account"
+            }
+        }
+
+        var doneMessage: String {
+            switch self {
+            case .onboarding: return "Signed in. Your tasks and calendar history are being restored — they'll appear in a moment."
+            case .settings: return "Your tasks and calendar history are being restored. They'll appear in a moment."
+            }
+        }
+    }
+
+    var context: Context = .settings
+
     @Environment(\.dismiss) private var dismiss
 
     private enum Step {
@@ -105,7 +128,7 @@ struct RecoverAccountView: View {
                             if let errorMessage {
                                 Text(errorMessage).foregroundStyle(.red)
                             }
-                            Text("Enter the email linked to the account you want to recover. We'll send a one-time code.")
+                            Text("Enter the email linked to your account. We'll send a one-time code.")
                         }
                     }
 
@@ -128,15 +151,15 @@ struct RecoverAccountView: View {
 
                 case .done:
                     Section {
-                        Label("Account recovered", systemImage: "checkmark.circle.fill")
+                        Label("Signed in", systemImage: "checkmark.circle.fill")
                             .foregroundStyle(.green)
-                        Text("Your tasks and calendar history are being restored. They'll appear in a moment.")
+                        Text(context.doneMessage)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
                 }
             }
-            .navigationTitle("Recover Account")
+            .navigationTitle(context.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

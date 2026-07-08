@@ -22,6 +22,20 @@ final class SupabaseManager {
     /// against it, since there is no session to authorize them.
     private(set) var isAuthenticated = false
 
+    enum AuthPhase: Equatable {
+        /// signInIfNeeded is in flight; nothing to show yet.
+        case resolving
+        /// No cached identity and no session: a genuine first launch, or a
+        /// fresh install/reinstall with nothing local. Rather than silently
+        /// minting a brand-new anonymous account here (which is exactly how
+        /// accounts got orphaned before), the UI should ask whether this is
+        /// a new user or someone signing back into an existing account.
+        case needsOnboarding
+        /// `userId` is set (authenticated or cached-offline) — show the app.
+        case ready
+    }
+    private(set) var phase: AuthPhase = .resolving
+
     private static let currentUserIdKey = "currentUserId"
 
     private init() {
@@ -35,9 +49,11 @@ final class SupabaseManager {
     }
 
     func signInIfNeeded() async {
+        phase = .resolving
         do {
             let session = try await client.auth.session
             applyAuthenticatedSession(session)
+            phase = .ready
             return
         } catch {
             print("[Supabase] session load error: \(error)")
@@ -51,19 +67,32 @@ final class SupabaseManager {
         // rather than ever minting a second account behind the user's back.
         if let session = client.auth.currentSession {
             applyAuthenticatedSession(session)
+            phase = .ready
             return
         }
         if userId != nil {
             isAuthenticated = false
+            phase = .ready
             return
         }
 
-        // No stored session and no previously known user: true first launch.
+        // No stored session and no previously known user: let the UI ask
+        // whether to start fresh or sign into an existing account, instead
+        // of assuming "fresh" the way this app used to.
+        phase = .needsOnboarding
+    }
+
+    /// Called when the user explicitly chooses "Get Started" on a device
+    /// with no prior identity. Only path left that creates a brand-new
+    /// anonymous account — every other case reuses a known identity.
+    func continueAsNewAccount() async {
         do {
             let session = try await client.auth.signInAnonymously()
             applyAuthenticatedSession(session)
+            phase = .ready
         } catch {
             print("[Supabase] Auth error: \(error)")
+            phase = .needsOnboarding
         }
     }
 
@@ -97,6 +126,7 @@ final class SupabaseManager {
         userId = response.user.id
         linkedEmail = response.user.email
         isAuthenticated = true
+        phase = .ready
         SharedDataStore.sharedDefaults.set(response.user.id.uuidString, forKey: Self.currentUserIdKey)
         SharedDataStore.sharedDefaults.set(true, forKey: "needsCloudRestore")
     }
