@@ -52,10 +52,10 @@ struct FriendsView: View {
             .sheet(isPresented: $showingRecovery) {
                 RecoverAccountView()
             }
-            .task { await vm.load() }
-            .onChange(of: SupabaseManager.shared.userId) { _, _ in
-                // Reload profile & friends after an account recovery.
-                Task { await vm.load() }
+            .task(id: SupabaseManager.shared.userId) {
+                // Re-runs (cancelling any in-flight load) after an account
+                // recovery changes the signed-in user.
+                await vm.load()
             }
         }
     }

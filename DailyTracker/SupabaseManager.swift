@@ -16,14 +16,28 @@ final class SupabaseManager {
     /// Email linked to the current account, if any. A linked email makes the
     /// account recoverable even if the local session is ever lost.
     private(set) var linkedEmail: String?
+    /// True only when `userId` is backed by a real Supabase session. False
+    /// means `userId` is a locally-cached last-known identity (shown so the
+    /// app isn't blank while offline) — writes and cloud reads must not run
+    /// against it, since there is no session to authorize them.
+    private(set) var isAuthenticated = false
 
-    private init() {}
+    private static let currentUserIdKey = "currentUserId"
+
+    private init() {
+        // Seed synchronously from the cache so the very first frame can show
+        // the last known user's data while signInIfNeeded() resolves in the
+        // background. isAuthenticated stays false until a real session backs it.
+        if let cached = SharedDataStore.sharedDefaults.string(forKey: Self.currentUserIdKey),
+           let cachedId = UUID(uuidString: cached) {
+            userId = cachedId
+        }
+    }
 
     func signInIfNeeded() async {
         do {
             let session = try await client.auth.session
-            userId = session.user.id
-            linkedEmail = session.user.email
+            applyAuthenticatedSession(session)
             return
         } catch {
             print("[Supabase] session load error: \(error)")
@@ -32,25 +46,32 @@ final class SupabaseManager {
         // A failure above (e.g. token refresh with no network right after a
         // reboot) does not mean the account is gone. Creating a new anonymous
         // user here would orphan all data keyed to the old user ID, so fall
-        // back to the identity we already know about instead.
+        // back to the identity we already know about instead, and let the
+        // caller retry signInIfNeeded later (e.g. on the next foreground)
+        // rather than ever minting a second account behind the user's back.
         if let session = client.auth.currentSession {
-            userId = session.user.id
-            linkedEmail = session.user.email
+            applyAuthenticatedSession(session)
             return
         }
-        if let cached = SharedDataStore.sharedDefaults.string(forKey: "currentUserId"),
-           let cachedId = UUID(uuidString: cached) {
-            userId = cachedId
+        if userId != nil {
+            isAuthenticated = false
             return
         }
 
         // No stored session and no previously known user: true first launch.
         do {
             let session = try await client.auth.signInAnonymously()
-            userId = session.user.id
+            applyAuthenticatedSession(session)
         } catch {
             print("[Supabase] Auth error: \(error)")
         }
+    }
+
+    private func applyAuthenticatedSession(_ session: Session) {
+        userId = session.user.id
+        linkedEmail = session.user.email
+        isAuthenticated = true
+        SharedDataStore.sharedDefaults.set(session.user.id.uuidString, forKey: Self.currentUserIdKey)
     }
 
     // MARK: - Email linking & account recovery
@@ -75,79 +96,44 @@ final class SupabaseManager {
         let response = try await client.auth.verifyOTP(email: email, token: code, type: .email)
         userId = response.user.id
         linkedEmail = response.user.email
-        SharedDataStore.sharedDefaults.set(response.user.id.uuidString, forKey: "currentUserId")
+        isAuthenticated = true
+        SharedDataStore.sharedDefaults.set(response.user.id.uuidString, forKey: Self.currentUserIdKey)
         SharedDataStore.sharedDefaults.set(true, forKey: "needsCloudRestore")
     }
 
     // MARK: - Cloud restore (read path)
 
-    struct RemoteTask: Decodable {
-        let id: UUID
-        let title: String
-        let isCompleted: Bool
-        let isPartial: Bool
-        let orderIndex: Int
-        let createdAt: Date
-
-        enum CodingKeys: String, CodingKey {
-            case id
-            case title
-            case isCompleted = "is_completed"
-            case isPartial = "is_partial"
-            case orderIndex = "order_index"
-            case createdAt = "created_at"
-        }
+    enum SyncError: Error {
+        case notAuthenticated
     }
 
-    struct RemoteDayRecord: Decodable {
-        let id: UUID
-        let dateString: String
-        let allTaskTitles: [String]
-        let completedTaskTitles: [String]
-        let partiallyCompletedTaskTitles: [String]
-
-        enum CodingKeys: String, CodingKey {
-            case id
-            case dateString = "date_string"
-            case allTaskTitles = "all_task_titles"
-            case completedTaskTitles = "completed_task_titles"
-            case partiallyCompletedTaskTitles = "partially_completed_task_titles"
-        }
+    /// Throws (rather than swallowing into an empty array) so callers doing a
+    /// one-shot restore can tell "confirmed nothing on the server" apart from
+    /// "the fetch failed" and only consume their one-shot restore flag on the
+    /// former.
+    func fetchRemoteTasks() async throws -> [TaskItemRow] {
+        guard isAuthenticated, let userId else { throw SyncError.notAuthenticated }
+        return try await client.from("task_items")
+            .select()
+            .eq("user_id", value: userId.uuidString)
+            .order("order_index")
+            .execute()
+            .value
     }
 
-    func fetchRemoteTasks() async -> [RemoteTask] {
-        guard let userId else { return [] }
-        do {
-            return try await client.from("task_items")
-                .select()
-                .eq("user_id", value: userId.uuidString)
-                .order("order_index")
-                .execute()
-                .value
-        } catch {
-            print("[Supabase] fetch tasks error: \(error)")
-            return []
-        }
-    }
-
-    func fetchRemoteDayRecords() async -> [RemoteDayRecord] {
-        guard let userId else { return [] }
-        do {
-            return try await client.from("day_records")
-                .select()
-                .eq("user_id", value: userId.uuidString)
-                .execute()
-                .value
-        } catch {
-            print("[Supabase] fetch day records error: \(error)")
-            return []
-        }
+    func fetchRemoteDayRecords() async throws -> [DayRecordRow] {
+        guard isAuthenticated, let userId else { throw SyncError.notAuthenticated }
+        return try await client.from("day_records")
+            .select()
+            .eq("user_id", value: userId.uuidString)
+            .execute()
+            .value
     }
 
     // MARK: - Write path
 
     func upsertTask(_ task: TaskItem) async {
-        guard let userId else { return }
+        guard isAuthenticated, let userId else { return }
         let record = TaskItemRow(
             id: task.id,
             userId: userId,
@@ -165,7 +151,7 @@ final class SupabaseManager {
     }
 
     func deleteTask(id: UUID) async {
-        guard let userId else { return }
+        guard isAuthenticated, let userId else { return }
         do {
             try await client.from("task_items")
                 .delete()
@@ -178,7 +164,7 @@ final class SupabaseManager {
     }
 
     func upsertDayRecord(_ record: DayRecord) async {
-        guard let userId else { return }
+        guard isAuthenticated, let userId else { return }
         let row = DayRecordRow(
             id: record.id,
             userId: userId,
@@ -188,14 +174,22 @@ final class SupabaseManager {
             partiallyCompletedTaskTitles: record.partiallyCompletedTaskTitles
         )
         do {
-            try await client.from("day_records").upsert(row).execute()
+            // Target the natural key (one row per user per day), not the
+            // primary key: a locally-created record's id can legitimately
+            // differ from a same-day row that already exists server-side
+            // (e.g. after merging in restored data), and a plain PK upsert
+            // would try to INSERT a second row and violate the unique
+            // (user_id, date_string) constraint instead of updating it.
+            try await client.from("day_records")
+                .upsert(row, onConflict: "user_id,date_string")
+                .execute()
         } catch {
             print("[Supabase] upsert day record error: \(error)")
         }
     }
 }
 
-private struct TaskItemRow: Encodable {
+struct TaskItemRow: Codable {
     let id: UUID
     let userId: UUID
     let title: String
@@ -215,7 +209,7 @@ private struct TaskItemRow: Encodable {
     }
 }
 
-private struct DayRecordRow: Encodable {
+struct DayRecordRow: Codable {
     let id: UUID
     let userId: UUID
     let dateString: String

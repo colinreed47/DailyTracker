@@ -30,23 +30,39 @@ begin
     );
   update public.day_records set user_id = new_user where user_id = old_user;
 
-  -- profiles is keyed by user_id; keep the old profile (name, friend code).
-  delete from public.profiles where user_id = new_user;
-  update public.profiles set user_id = new_user where user_id = old_user;
+  -- profiles is keyed by user_id; keep the old profile (name, friend code) —
+  -- but only if the old account actually has one. The old anonymous user may
+  -- never have opened the Friends screen (profiles are created lazily), and
+  -- unconditionally deleting the new account's profile would strand it with
+  -- no row and an unrecoverable friend_code.
+  if exists (select 1 from public.profiles where user_id = old_user) then
+    delete from public.profiles where user_id = new_user;
+    update public.profiles set user_id = new_user where user_id = old_user;
+  end if;
 
-  -- Move friendships, skipping any that would collide with ones the new
-  -- account already has.
+  -- Merging two accounts that were already friends with each other would
+  -- otherwise turn into a self-friendship; drop that relationship instead.
+  delete from public.friendships
+  where (requester_id = old_user and addressee_id = new_user)
+     or (requester_id = new_user and addressee_id = old_user);
+
+  -- Move the remaining friendships, skipping any that would duplicate a
+  -- friendship the new account already has with the same person — checked in
+  -- BOTH directions, since the app treats an accepted friendship as
+  -- undirected and add_friend_by_code blocks requests either way.
   update public.friendships f set requester_id = new_user
   where f.requester_id = old_user
     and not exists (
       select 1 from public.friendships x
-      where x.requester_id = new_user and x.addressee_id = f.addressee_id
+      where (x.requester_id = new_user and x.addressee_id = f.addressee_id)
+         or (x.requester_id = f.addressee_id and x.addressee_id = new_user)
     );
   update public.friendships f set addressee_id = new_user
   where f.addressee_id = old_user
     and not exists (
       select 1 from public.friendships x
-      where x.requester_id = f.requester_id and x.addressee_id = new_user
+      where (x.requester_id = new_user and x.addressee_id = f.requester_id)
+         or (x.requester_id = f.requester_id and x.addressee_id = new_user)
     );
   -- Remove any leftovers that collided.
   delete from public.friendships where requester_id = old_user or addressee_id = old_user;
